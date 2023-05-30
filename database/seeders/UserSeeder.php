@@ -33,5 +33,18 @@ class UserSeeder extends Seeder
             "password" => bcrypt("password"),
             "image_path" => "image/user/3.jpg",
         ]);
+
+        User::create([
+            "name" => "Test Name",
+            "email" => "test@email.com",
+            "password" => bcrypt("password"),
+        ]);
+
+        User::create([
+            "name" => "Test Second Name",
+            "email" => "test2@email.com",
+            "password" => bcrypt("password"),
+            "is_active" => false,
+        ]);
     }
 }

@@ -30,14 +30,19 @@ class AuthController extends Controller
         ]);
 
         $rememberMe = $request->has("remember_me");
+        $isValid = Auth::attempt($credentials, $rememberMe);
+        $isActive = Auth::user()->is_active;
 
-        if (Auth::attempt($credentials, $rememberMe)) {
-            $request->session()->regenerate();
-            return redirect()->route('home');
+        if (!$isValid || !$isActive) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')
+                ->withErrors("Wrong email or password, please try again");
         }
 
-        return redirect()->route('login')
-            ->withErrors("Wrong email or password, please try again");
+        $request->session()->regenerate();
+        return redirect()->route('home');
     }
 
     public function doRegister(Request $request)

@@ -14,13 +14,13 @@
 
                 <a data-role="menu-item" href="{{ route("setting") }}"
                     class="flex items-center justify-start w-full gap-3 px-6 py-2 text-sm text-black cursor-pointer select-none {{ Route::currentRouteName() == 'setting' ? 'bg-gray-200' : 'hover:bg-black hover:text-white' }}">
-                    <x-fas-gear class="w-6 h-6"></x-fas-gear>
+                    <x-fas-gear class="w-6 h-6"/>
                     <p class="text-lg font-normal"> Setting </p>
                 </a>
 
                 <a data-role="menu-item" href="{{ route("home") }}"
                     class="flex items-center justify-start w-full gap-3 px-6 py-2 text-sm text-black cursor-pointer select-none {{ Route::currentRouteName() == 'home' ? 'bg-gray-200' : 'hover:bg-black hover:text-white' }}">
-                    <x-fas-cube class="w-6 h-6"></x-fas-cube>
+                    <x-fas-cube class="w-6 h-6"/>
                     <p class="text-lg font-normal"> Team </p>
                 </a>
 
@@ -41,9 +41,9 @@
                 </div>
 
 
-                <div class="flex items-center justify-center gap-4">
+                <div class="flex items-center justify-center gap-2">
                     <p> <span class="font-bold ">Hello, </span> {{ Auth::user()->name }}</p>
-                    {{-- <x-avatar name="{{ Auth::user()->name }}"/> --}}
+                    <x-avatar :user="Auth::user()" class="w-12 h-12"/>
                 </div>
             </header>
             @yield('content')

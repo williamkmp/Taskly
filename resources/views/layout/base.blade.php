@@ -8,12 +8,13 @@
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
     @stack("head")
-    @stack("component")
 </head>
 <body>
     <x-toast-manager></x-toast-manager>
+    <x-modal-manager></x-modal-manager>
     @yield('body')
-    @stack('page')
+    @stack('component')
     @include("components.notification-script")
+    @stack('page')
 </body>
 </html>

@@ -1,4 +1,7 @@
 import "./bootstrap";
-import Alpine from 'alpinejs'
-window.Alpine = Alpine
-Alpine.start()
+import Alpine from "alpinejs";
+import Croppie from "croppie";
+
+window.Croppie = Croppie;
+window.Alpine = Alpine;
+Alpine.start();

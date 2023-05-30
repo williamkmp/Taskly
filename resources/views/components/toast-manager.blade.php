@@ -2,7 +2,7 @@
     class="fixed bottom-0 right-0 flex flex-col items-end justify-end bg-red-200 max-h-0 w-96 empty:hidden">
 </div>
 
-@pushOnce('page')
+@pushOnce('component')
     <script>
         console.log("Toast View manager is loaded ...👍");
         class ToastView {

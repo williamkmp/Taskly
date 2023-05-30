@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", function () {
@@ -23,15 +24,22 @@ Route::middleware("guest")
 Route::middleware(["auth", "auth.session"])
     ->group(function () {
 
+        Route::get("auth/logout", [AuthController::class, "doLogout"])->name("doLogout");
+
         Route::controller(TeamController::class)
             ->prefix("team")
             ->group(function () {
                 Route::get("/", "showTeam")->name('home');
             });
 
-        Route::controller(SettingController::class)
-            ->prefix("setting")
+        Route::controller(UserController::class)
+            ->prefix("user")
             ->group(function () {
-                Route::get("/", "showSetting")->name('setting');
+                Route::get("/setting", "showSetting")->name('setting');
+                Route::get("/logout", "Logout")->name('doLogout');
+                Route::post("/deactivate", "deactivate")->name('doDeactivateUser');
+                Route::post("/update/profile", "updateData")->name('doUserDataUpdate');
+                Route::post("/update/password", "updatePassword")->name('doUserPasswordUpdate');
+                Route::post("/update/image", "updateImage")->name('doUserPicturedUpdate');
             });
     });
