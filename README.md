@@ -13,7 +13,7 @@ Below are the requirement for running the project
 1. Clone Repository and download all dependency
 
     ```bash
-    git clone https://github.com/williamkmp/laravel-taskly.git
+    git clone https://github.com/williamkmp/Taskly.git
     cd laravel-taskly
     composer install
     npm install
