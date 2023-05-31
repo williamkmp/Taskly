@@ -12,6 +12,7 @@
 <body>
     <x-toast-manager></x-toast-manager>
     <x-modal-manager></x-modal-manager>
+    <x-page-loader></x-page-loader>
     @yield('body')
     @stack('component')
     @include("components.notification-script")
