@@ -2,10 +2,12 @@
 
 @section('content')
     <template is-modal="changeProfile">
-        <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4">
+        <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4 flex-grow-1">
             @csrf
-            <x-form.file name="profile_picture" label="Choose Image"/>
-            <x-form.button type="button" id="btn-submit" primary>Save</x-form.button>
+            <x-form.file name="picture" label="Choose Image" accept="image/png, image/jpeg, image/jpg" />
+            <div class="hidden w-full h-36" id="image-editor"></div>
+            <x-form.button type="button" id="btn-submit" primary>Save
+            </x-form.button>
         </div>
     </template>
 
@@ -89,7 +91,51 @@
 
 @pushOnce('page')
     <script>
-        ModalView.onShow("",)
+        ModalView.onShow("changeProfile", (modal) => {
+            const imageInput = modal.querySelector("#input-file-picture");
+            const btnSubmit = modal.querySelector("#btn-submit");
+            const imageEditorContainer = modal.querySelector("#image-editor");
+            let imageEditor = new Croppie(imageEditorContainer, {
+                viewport: {
+                    width: 150,
+                    height: 150,
+                    type: 'circle'
+                },
+
+                boundary: {
+                    width: 200,
+                    height: 200
+                }
+            });
+
+            imageInput.addEventListener("change", (event) => {
+                imageEditorContainer.classList.remove("hidden");
+                imageEditor.bind({
+                    url: URL.createObjectURL(event.target.files[0]),
+                    orientation: 1
+                });
+            });
+
+            btnSubmit.addEventListener("click", async (e) => {
+                try {
+                    PageLoader.show();
+                    const pfpBlobData = await getCropperImageBlob(imageEditor);
+                    let response = await ServerRequest.post("{{ route('doUserPicturedUpdate') }}", {
+                        image: pfpBlobData
+                    });
+                    location.reload();
+                } catch (error) {
+                    PageLoader.close();
+                    ModalView.close();
+                    let errorMessage = getResponseError(error);
+                    if (error)
+                        ToastView.notif("Warning", errorMessage);
+                    else
+                        ToastView.notif("Error", "Something went wrong please try again");
+                }
+            });
+
+        });
 
 
         @if ($errors->any())
