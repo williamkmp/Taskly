@@ -2,12 +2,11 @@
 
 @section('content')
     <template is-modal="changeProfile">
-        <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST">
+        <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4">
             @csrf
-            <x-form.file name="image" />
-            <div class="" id="image-editor-container"></div>
-            <x-form.button type="submit" id="btn-submit" primary>Save</x-form.button>
-        </form>
+            <x-form.file name="profile_picture" label="Choose Image"/>
+            <x-form.button type="button" id="btn-submit" primary>Save</x-form.button>
+        </div>
     </template>
 
     <template is-modal="deleteAccount">
@@ -90,94 +89,8 @@
 
 @pushOnce('page')
     <script>
-        function renderImage(canvas, blob) {
-            const ctx = canvas.getContext('2d')
-            const img = new Image()
-            img.onload = (event) => {
-                URL.revokeObjectURL(event.target.src)
-                ctx.drawImage(event.target, 0, 0)
-            }
-            img.src = URL.createObjectURL(blob)
-        }
+        ModalView.onShow("",)
 
-        function attachBlob(fileInput, blob) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const image = new Image();
-                image.onload = function() {
-                    const canvas = document.createElement("canvas"),
-                    ctx = canvas.getContext("2d");
-
-                    // Set canvas size to image size
-                    canvas.width = image.width;
-                    canvas.height = image.height;
-                    ctx.drawImage(image, 0, 0);
-                    // Set the motified image to be content when the form is submited.
-                    document.getElementById("modified_image").value = canvas.toDataURL("image/jpg");
-                }
-                image.src = reader.result;
-            };
-            reader.readAsDataURL(this.files[0]);
-        };
-
-        ModalView.onShow("changeProfile", function(modal) {
-            const editorContainer = modal.querySelector("#image-editor-container");
-            const fileSelector = modal.querySelector("#input-file-profile_picture");
-            const btnSubmit = modal.querySelector("#btn-submit");
-            const form = modal.querySelector("#change-profile-picture");
-            const imageInput = modal.querySelector("#image_pfp_hidden");
-
-            let cropper = null;
-
-            fileSelector.addEventListener("change", (event) => {
-                console.log("init croppie");
-                editorContainer.style.display = "static";
-                cropper = new Croppie(editorContainer, {
-                    viewport: {
-                        width: 150,
-                        height: 150,
-                        type: 'circle'
-                    },
-                    boundary: {
-                        width: 200,
-                        height: 200
-                    }
-                });
-                cropper.bind({
-                    url: URL.createObjectURL(event.target.files[0]),
-                    orientation: 1
-                });
-            });
-
-            btnSubmit.addEventListener("click", (e) => {
-                e.preventDefault();
-                if (cropper == null) {
-                    ModalView.close();
-                    ToastView.notif("Warning", "No selected file, please upload an image");
-                };
-                cropper.result('blob').then(function(blob) {
-                    let formData = new FormData();
-                    formData.append('_token', `{{ csrf_token() }}`);
-                    formData.append('image', blob);
-
-                    let form = document.createElement("FORM");
-                    form.action = "{{ route('doUserPicturedUpdate') }}";
-                    form.method = "POST";
-
-                    axios({
-                        method: ('post'),
-                        url: `{{ route('doUserPicturedUpdate') }}`,
-                        data: formData,
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }).then((response) => {
-                        console.log(response);
-                    })
-                });
-            })
-
-        });
 
         @if ($errors->any())
             ToastView.notif("Warning", "{{ $errors->first() }}");

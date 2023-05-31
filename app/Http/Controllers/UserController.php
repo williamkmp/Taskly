@@ -16,17 +16,15 @@ class UserController extends Controller
 
     public function showSetting()
     {
-        //TODO: implement this
         return view("setting");
     }
 
     public function updateImage(Request $request)
     {
         $userId = Auth::user()->id;
-        dd($request);
-        $request->validate(['image' => "required|mimes:jpg,jpeg,png|max:10240"]);
-        $this->fileLogic->storeUserImage($userId, $request, "image");
-        return redirect()->back()->with('notif', ['Success\Profile chnged successfully']);
+        $request->validate(['profile_picture' => "required|mimes:jpg,jpeg,png|max:10240"]);
+        $this->fileLogic->storeUserImage($userId, $request, "profile_picture");
+        return redirect()->back()->with('notif', ['Success\nProfile changed successfully']);
     }
 
     public function updateData(Request $request)
