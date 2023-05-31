@@ -2,7 +2,6 @@
 
 <button @isset($action) onclick="{{ $action }}" @endisset
     @isset($form) form="{{ $form }}" @endisset
-    @isset($accept) accept="{{ $accept }}" @endisset
     @isset($type) type="{{ $type }}" @endisset
     @isset($id) id="{{ $id }}" @endisset
     @if (isset($primary))
