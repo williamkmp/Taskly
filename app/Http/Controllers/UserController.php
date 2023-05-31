@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Logic\FileLogic;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -22,9 +24,14 @@ class UserController extends Controller
     public function updateImage(Request $request)
     {
         $userId = Auth::user()->id;
-        $request->validate(['profile_picture' => "required|mimes:jpg,jpeg,png|max:10240"]);
-        $this->fileLogic->storeUserImage($userId, $request, "profile_picture");
-        return redirect()->back()->with('notif', ['Success\nProfile changed successfully']);
+        $validator = Validator::make($request->all(), ['image' => "required|mimes:jpg,jpeg,png|max:10240"]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), HttpResponse::HTTP_BAD_REQUEST);
+        }
+
+        $this->fileLogic->storeUserImage($userId, $request, "image");
+        return response()->json(["message" => "success"]);
     }
 
     public function updateData(Request $request)
