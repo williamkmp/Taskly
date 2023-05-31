@@ -50,3 +50,7 @@
         </div>
     </div>
 @endsection
+
+@pushOnce('component')
+    <x-server-request-script/>
+@endPushOnce

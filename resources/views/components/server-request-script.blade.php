@@ -17,6 +17,14 @@
         });
     }
 
+    function getResponseError(error){
+        if(!error) return null;
+        let response = error.response;
+        if(!response) return null;
+        let firstError = response[Object.keys(response)[0]];
+        return firstError?.pop();
+    }
+
     class ServerRequest {
         static config = {
             headers: {
