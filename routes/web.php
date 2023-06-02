@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -10,37 +9,18 @@ Route::get("/", function () {
     return redirect()->route("login");
 });
 
-Route::middleware("guest")
-    ->controller(AuthController::class)
-    ->prefix("auth")
-    ->group(function () {
+Route::middleware("guest")->get("auth/login", [AuthController::class, "showLogin"])->name("login");
+Route::middleware("guest")->post("auth/login", [AuthController::class, "doLogin"])->name("doLogin");
+Route::middleware("guest")->get("auth/register", [AuthController::class, "showRegister"])->name("register");
+Route::middleware("guest")->post("auth/register", [AuthController::class, "doRegister"])->name("doRegister");
 
-        Route::get("login", "showLogin")->name("login");
-        Route::get("register", "showRegister")->name("register");
-        Route::post("register", "doRegister")->name("doRegister");
-        Route::post("login", "doLogin")->name("doLogin");
-    });
 
-Route::middleware(["auth", "auth.session"])
-    ->group(function () {
+Route::middleware(["auth", "auth.session"])->get("team", [TeamController::class, "showTeam"])->name("home");
+Route::middleware(["auth", "auth.session"])->post("team/search", [TeamController::class, "search"])->name("searchTeam");
 
-        Route::get("auth/logout", [AuthController::class, "doLogout"])->name("doLogout");
-
-        Route::controller(TeamController::class)
-            ->prefix("team")
-            ->group(function () {
-                Route::get("/", "showTeam")->name('home');
-                Route::post("/search", "search")->name('searchTeam');
-            });
-
-        Route::controller(UserController::class)
-            ->prefix("user")
-            ->group(function () {
-                Route::get("/setting", "showSetting")->name('setting');
-                Route::get("/logout", "Logout")->name('doLogout');
-                Route::post("/deactivate", "deactivate")->name('doDeactivateUser');
-                Route::post("/update/profile", "updateData")->name('doUserDataUpdate');
-                Route::post("/update/password", "updatePassword")->name('doUserPasswordUpdate');
-                Route::post("/update/image", "updateImage")->name('doUserPicturedUpdate');
-            });
-    });
+Route::middleware(["auth", "auth.session"])->get("user/setting", [UserController::class, "showSetting"])->name("setting");
+Route::middleware(["auth", "auth.session"])->get("user/logout", [UserController::class, "logout"])->name("doLogout");
+Route::middleware(["auth", "auth.session"])->post("user/deactivate", [UserController::class, "deactivate"])->name("doDeactivateUser");
+Route::middleware(["auth", "auth.session"])->post("user/update/profile", [UserController::class, "updateData"])->name("doUserDataUpdate");
+Route::middleware(["auth", "auth.session"])->post("user/update/password", [UserController::class, "updatePassword"])->name("doUserPasswordUpdate");
+Route::middleware(["auth", "auth.session"])->post("user/update/image", [UserController::class, "updateImage"])->name("doUserPicturedUpdate");
