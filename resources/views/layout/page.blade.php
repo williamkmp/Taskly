@@ -43,7 +43,7 @@
 
                 <div class="flex items-center justify-center gap-2">
                     <p> <span class="font-bold ">Hello, </span> {{ Auth::user()->name }}</p>
-                    <x-avatar :user="Auth::user()" class="w-12 h-12"/>
+                    <x-avatar name="{{ Auth::user()->name }}" asset="{{ Auth::user()->image_path }}" class="w-12 h-12"/>
                 </div>
             </header>
             @yield('content')

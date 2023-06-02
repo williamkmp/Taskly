@@ -44,7 +44,7 @@
             <div class="overflow-hidden border-2 shadow-sm rounded-xl border-b-gray-200">
                 <header class="relative w-full shadow-md h-14 bg-pattern-triangle">
                     <div class="absolute w-20 h-20 -bottom-10 left-8">
-                        <x-avatar :user="Auth::user()" action="javascript:ModalView.show('changeProfile')"
+                        <x-avatar name="{{ Auth::user()->name }}" asset="{{ Auth::user()->image_path }}" action="javascript:ModalView.show('changeProfile')"
                             class="w-full h-full text-2xl shadow-md" />
                     </div>
                 </header>
