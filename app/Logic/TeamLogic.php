@@ -16,27 +16,11 @@ class TeamLogic
      *
      * @return Collection<int, Team> team where user is a member
      */
-    function getUserTeams(int $user_id)
+    function getUserTeams(int $user_id, $status = ["Member", "Owner"])
     {
-        $teams = UserTeam::all()
-            ->where("user_id", $user_id)
-            ->where("status", "Member");
-
-        return $teams;
-    }
-
-    /**
-     * get all team invite of a given user
-     *
-     * @param int $user_id user id
-     *
-     * @return Collection<int, Team> team invites
-     */
-    function getUserTeamInvites(int $user_id)
-    {
-        $teams = UserTeam::all()
-            ->where("user_id", $user_id)
-            ->where("status", "Pending");
+        $teams = User::find($user_id)->teams()
+            ->wherePivotIn("status", $status)
+            ->get();
 
         return $teams;
     }
