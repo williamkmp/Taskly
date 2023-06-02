@@ -1,4 +1,4 @@
-@props(['user', 'size', 'action'])
+@props(['name', 'asset', 'size', 'action'])
 
 @if(!isset($size))
     @php
@@ -7,7 +7,7 @@
 @endif
 
 @php
-    $full_name = $user->name;
+    $full_name = $name;
     $initials = '';
     $name_array = explode(' ', $full_name);
     foreach ($name_array as $name) {
@@ -28,10 +28,10 @@
     @endisset
 
 
-    @if ($user->image_path != null)
+    @if ($asset != null)
         <div
             class="flex items-center content-center w-full h-full overflow-hidden bg-black rounded-full cursor-default select-none">
-            <img class="object-fill" src="{{ asset($user->image_path) }}" alt="profil_picture">
+            <img class="object-fill" src="{{ asset($asset) }}" alt="profil_picture">
         </div>
     @else
         <div class="flex items-center content-center w-full h-full">
