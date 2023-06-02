@@ -30,6 +30,7 @@ Route::middleware(["auth", "auth.session"])
             ->prefix("team")
             ->group(function () {
                 Route::get("/", "showTeam")->name('home');
+                Route::post("/search", "search")->name('searchTeam');
             });
 
         Route::controller(UserController::class)
