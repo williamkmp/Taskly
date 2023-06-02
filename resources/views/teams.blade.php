@@ -6,7 +6,7 @@
         <header class="w-full">
             <form class="flex items-center gap-4" id="search-form" action="{{ route('searchTeam') }}" method="POST">
                 @csrf
-                <x-form.text icon="fas-cube" name="team_name" placeholder="Team's name" @isset($old) value="{{ $old['team_name'] }} @endisset "/>
+                <x-form.text icon="fas-cube" name="team_name" placeholder="Team's name" value="{{ old('value') }}"/>
                 <div class="h-full min-w-min">
                     <x-form.button type="submit" primary class="h-full">
                         <x-fas-magnifying-glass class="w-4 h-4" />Search
