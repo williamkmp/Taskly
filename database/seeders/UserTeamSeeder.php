@@ -34,6 +34,11 @@ class UserTeamSeeder extends Seeder
                 "owen@email.com",
                 "test@email.com",
             ],
+            "Laravel" => [
+                "filipus@email.com ",
+                "owen@email.com",
+                "test@email.com",
+            ]
         ];
 
         $allTeam = Team::all();
@@ -53,5 +58,13 @@ class UserTeamSeeder extends Seeder
 
         $william = User::where("email", "william@email.com")->first();
         $william->teamRelations()->update(["status" => "Owner"]);
+
+        $laravelTeam = Team::where("name", "Laravel")->first();
+        UserTeam::create([
+            "user_id" => $william->id,
+            "team_id" => $laravelTeam->id,
+            "status" => "Pending",
+        ]);
+
     }
 }

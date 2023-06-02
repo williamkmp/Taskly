@@ -28,8 +28,14 @@ class TeamSeeder extends Seeder
 
         Team::create([
             "name" => "Adins",
-            "pattern" => "paper",
+            "pattern" => "wavy",
             "description" => "Team repository for Adicipta Inovasi mobile division group.",
+        ]);
+
+        Team::create([
+            "name" => "Laravel",
+            "pattern" => "circle",
+            "description" => "Taskly team for opn source Laravel application.",
         ]);
     }
 }
