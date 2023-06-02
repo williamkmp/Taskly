@@ -16,17 +16,20 @@ class TeamSeeder extends Seeder
     {
         Team::create([
             "name" => "Taskly",
+            "pattern" => "zig-zag",
             "description" => "Team for the Taskly web application, class assingment project.",
         ]);
 
         Team::create([
-            "name" => "Frwncis",
+            "name" => "Frawncis",
+            "pattern" => "isometric",
             "description" => "Team for the Frwncis web application, lab assingment project.",
         ]);
 
         Team::create([
             "name" => "Adins",
-            "description" => "Team repository for Adicipta Inovasi group.",
+            "pattern" => "paper",
+            "description" => "Team repository for Adicipta Inovasi mobile division group.",
         ]);
     }
 }
