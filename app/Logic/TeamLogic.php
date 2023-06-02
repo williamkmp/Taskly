@@ -16,10 +16,11 @@ class TeamLogic
      *
      * @return Collection<int, Team> team where user is a member
      */
-    function getUserTeams(int $user_id, $status = ["Member", "Owner"])
+    function getUserTeams(int $user_id, $status = ["Member", "Owner", "Pending"], $team_name = "%")
     {
         $teams = User::find($user_id)->teams()
             ->wherePivotIn("status", $status)
+            ->where("name", "LIKE", "%".$team_name."%")
             ->get();
 
         return $teams;
