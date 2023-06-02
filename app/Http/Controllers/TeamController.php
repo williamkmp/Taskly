@@ -16,11 +16,27 @@ class TeamController extends Controller
 
     public function showTeam()
     {
+
         $user = User::find(Auth::user()->id);
         $teams = $this->teamLogic->getUserTeams($user->id, ["Member", "Owner"]);
         $invites = $this->teamLogic->getUserTeams($user->id, ["Pending"]);
 
         return view("teams")
+            ->with("teams", $teams)
+            ->with("invites", $invites);
+    }
+
+    public function search(Request $request)
+    {
+        $request->validate(["team_name" => "required"]);
+        $old = ["team_name" => $request->team_name];
+
+        $user = User::find(Auth::user()->id);
+        $teams = $this->teamLogic->getUserTeams($user->id, ["Member", "Owner"], $request->team_name);
+        $invites = $this->teamLogic->getUserTeams($user->id, ["Pending"], $request->team_name);
+
+        return view("teams")
+            ->with("old", $old)
             ->with("teams", $teams)
             ->with("invites", $invites);
     }
