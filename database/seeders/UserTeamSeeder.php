@@ -23,7 +23,7 @@ class UserTeamSeeder extends Seeder
                 "farhan@email.com",
                 "test@email.com",
             ],
-            "Frwncis" => [
+            "Frawncis" => [
                 "william@email.com",
                 "daffa@email.com",
                 "test@email.com"
