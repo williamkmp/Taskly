@@ -50,8 +50,7 @@ class AuthController extends Controller
                 ->withErrors("Account is inactive");
         }
 
-        $request->session()->regenerate();
-        return redirect()->withInput()->route('home');
+        return redirect()->route('home');
     }
 
     public function doRegister(Request $request)
