@@ -44,13 +44,17 @@
             <div class="overflow-hidden border-2 shadow-sm rounded-xl border-b-gray-200">
                 <header class="relative w-full shadow-md h-14 bg-pattern-triangle">
                     <div class="absolute w-20 h-20 -bottom-10 left-8">
-                        <x-avatar name="{{ Auth::user()->name }}" asset="{{ Auth::user()->image_path }}" action="javascript:ModalView.show('changeProfile')"
-                            class="w-full h-full text-2xl shadow-md" />
+                        <x-avatar name="{{ Auth::user()->name }}" asset="{{ Auth::user()->image_path }}" action="ModalView.show('changeProfile')"
+                            class="w-full h-full text-2xl shadow-md" >
+                            <div class="flex flex-wrap items-center justify-center w-full h-full transition-all bg-black opacity-0 hover:opacity-70">
+                                <x-fas-camera class="w-1/3 m-auto h-1/3"/>
+                            </div>
+                        </x-avatar>
                     </div>
                 </header>
                 <form class="px-10 mb-4" method="POST" action="{{ route('doUserDataUpdate') }}">
                     @csrf
-                    <div class="grid items-center grid-cols-2 grid-rows-3 gap-4 align-middle mt-14">
+                    <div class="grid items-center grid-cols-2 grid-rows-3 gap-6 align-middle mt-14">
                         <label for="input-text-name" class="text-lg font-semibold">Full Name</label>
                         <x-form.text name="name" :value="Auth::user()->name" />
 
@@ -73,7 +77,7 @@
         <section class="flex flex-col">
             <h2 class="mb-4 ml-6 text-2xl font-bold">General</h2>
             <div
-                class="grid items-center grid-cols-2 grid-rows-2 gap-4 px-10 py-8 align-middle border-2 shadow-sm pxoverflow-hidden rounded-xl border-b-gray-200">
+                class="grid items-center grid-cols-2 grid-rows-2 gap-6 px-10 py-8 align-middle border-2 shadow-sm pxoverflow-hidden rounded-xl border-b-gray-200">
 
                 <label class="text-lg font-semibold">Logout From Application</label>
                 <a href="{{ route('doLogout') }}">
