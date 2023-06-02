@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('user_team', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained();
             $table->foreignId('team_id')->constrained();
+            $table->enum("status", ["Member", "Owner", "Pending"])->default("Pending");
             $table->index(['user_id', 'team_id']);
             $table->unique('user_id', 'team_id');
             $table->timestamps();
