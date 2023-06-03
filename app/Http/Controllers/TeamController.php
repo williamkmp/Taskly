@@ -23,7 +23,7 @@ class TeamController extends Controller
     {
         $request->validate([
             "team_name" => "required|min:5|max:30",
-            "team_description" => "required|min:5|max:225"
+            "team_description" => "required|min:5|max:200"
         ]);
 
         $createdTeam = $this->teamLogic->createTeam(
@@ -33,6 +33,27 @@ class TeamController extends Controller
         );
 
         return redirect()->route("viewTeam", ['team_id' => $createdTeam->id]);
+    }
+
+    public function updateData(Request $request)
+    {
+        $request->validate([
+            "team_id" => "required|integer",
+            "team_name" => "required|min:5|max:30",
+            "team_description" => 'required|min:8|max:200',
+        ]);
+        $team_id = intval($request->team_id);
+        $selectedTeam = Team::find($team_id);
+
+        if($selectedTeam == null){
+            return redirect()->back()->withErrors("This team is alredy deleted please contact team owner");
+        }
+
+        $selectedTeam->name = $request->team_name;
+        $selectedTeam->description = $request->team_description;
+        $selectedTeam->save();
+
+        return redirect()->back()->with("notif", ["Success\nEdit succesfully applied!"]);
     }
 
     public function updateImage(Request $request)
