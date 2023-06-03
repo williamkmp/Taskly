@@ -10,6 +10,20 @@
                 </x-form.button>
             </div>
         </template>
+
+        <template is-modal="updateTeam">
+            <div class="flex flex-col w-full gap-4 p-4">
+                <h1 class="text-3xl font-bold">Edit Team</h1>
+                <hr>
+                <form action="{{ route('doTeamDataUpdate') }}" method="POST" class="flex flex-col gap-4">
+                    @csrf
+                    <input type="hidden" name="team_id" value="{{ $team->id }}">
+                    <x-form.text name="team_name" label="Team's Name" value="{{ $team->name }}" required/>
+                    <x-form.textarea name="team_description" label="Team's Description" value="{{ $team->description }}" required/>
+                    <x-form.button class="mt-4" type="submit" primary>Submit</x-form.button>
+                </form>
+            </div>
+        </template>
     @endif
 
     <div class="flex flex-col w-full h-full overflow-auto">
@@ -29,7 +43,15 @@
                 @endif
 
                 <div class="flex flex-col justify-center flex-grow h-full gap-2 max-w-[40rem] mr-auto">
-                    <h1 class="text-3xl font-bold">{{ $team->name }}</h1>
+                    <div class="flex items-center gap-6">
+                        <h1 class="text-3xl font-bold">{{ $team->name }}</h1>
+                        @if (Auth::user()->id == $owner->id)
+                            <x-form.button outline type="button" action="ModalView.show('updateTeam')" class=" !border-2 !text-sm w-min h-min">
+                                <x-fas-pen class="w-4 h-4" />
+                                Edit..
+                            </x-form.button>
+                        @endif
+                    </div>
                     <p>{{ $team->description }}</p>
                 </div>
 
