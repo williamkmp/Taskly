@@ -396,15 +396,15 @@ background: #ccc;
 .bg-pattern-polka {
     background-color: #ffffff;
     opacity: 1;
-    background-image: radial-gradient(#797979 1.05px, #ffffff 1.05px);
+    background-image: radial-gradient(#797979 3px, #ffffff 3px);
     background-size: 21px 21px;
 }
 .bg-pattern-polka-2 {
     background-color: #ffffff;
     opacity: 1;
-    background-image: radial-gradient(#797979 1.05px, transparent 1.05px),
-        radial-gradient(#797979 1.05px, #ffffff 1.05px);
-    background-size: 42px 42px;
+    background-image: radial-gradient(#797979 3px, transparent 3px),
+        radial-gradient(#797979 3px, #ffffff 3px);
+    background-size: 40px 40px;
     background-position: 0 0, 21px 21px;
 }
 .bg-pattern-line-bold-horizontal {
