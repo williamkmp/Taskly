@@ -6,6 +6,12 @@
         <div class="flex flex-col w-full gap-4 p-4">
             <h1 class="text-3xl font-bold">Create Team</h1>
             <hr>
+            <form action="{{ route('doCreateTeam') }}" method="POST" class="flex flex-col gap-4">
+                @csrf
+                <x-form.text name="team_name" label="Team's Name" required/>
+                <x-form.textarea name="team_description" label="Team's Description" required/>
+                <x-form.button class="mt-4" type="submit" primary>Submit</x-form.button>
+            </form>
         </div>
     </template>
 
@@ -62,15 +68,16 @@
                 </div>
 
                 @foreach ($teams as $team)
-                    <div
+                    <a
+                        href="{{ route('viewTeam', ['team_id' => $team->id]) }}"
                         class="flex cursor-pointer select-none flex-col transition duration-300 border border-gray-200 shadow-xl rounded-xl h-52 w-72 hover:shadow-2xl bg-pattern-{{ $team->pattern }} overflow-hidden">
                         <div class="flex-grow w-full "></div>
-                        <article class="flex flex-col w-full h-20 gap-1 px-4 py-2 bg-white">
+                        <article class="flex flex-col w-full h-20 gap-1 px-4 py-2 bg-white border-t border-t-gray-200">
                             <h3 class="overflow-hidden font-semibold truncate text-bold">{{ $team->name }}</h3>
                             <p class="flex-grow w-full text-xs break-all line-clamp-2 text-ellipsis max-h-8 ">
                                 {{ $team->description }} </p>
                         </article>
-                    </div>
+                    </a>
                 @endforeach
             </div>
         </section>
