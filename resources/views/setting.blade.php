@@ -3,7 +3,6 @@
 @section('content')
     <template is-modal="changeProfile">
         <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4 flex-grow-1">
-            @csrf
             <x-form.file name="picture" label="Choose Image" accept="image/png, image/jpeg, image/jpg" />
             <div class="hidden w-full h-36" id="image-editor"></div>
             <x-form.button type="button" id="btn-submit" primary>Save
