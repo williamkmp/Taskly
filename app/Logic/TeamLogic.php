@@ -54,6 +54,24 @@ class TeamLogic
 
         return $newTeam;
     }
+    /**
+     * get the owner of a certain team
+     *
+     * @param int $team_id team id
+     *
+     * @return User owner of the team
+     */
+    function getTeamOwner(int $team_id)
+    {
+        $team_user_pivot = UserTeam::all()
+            ->where("status", "Owner")
+            ->where("team_id", $team_id)
+            ->first();
+
+        $owner = User::find($team_user_pivot->user_id);
+
+        return $owner;
+    }
 
     /**
      * get all registered teams of a given user
