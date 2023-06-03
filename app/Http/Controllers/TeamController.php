@@ -7,6 +7,8 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class TeamController extends Controller
 {
@@ -28,15 +30,17 @@ class TeamController extends Controller
 
     public function search(Request $request)
     {
-        $request->validate(["team_name" => "required"]);
-        $old = ["team_name" => $request->team_name];
+        $validator = Validator::make($request->all(), ["team_name" => "required"]);
+        if($validator->fails()){
+            return redirect()->route("home");
+        }
 
+        $request->session()->flash("__old_team_name", $request->team_name);
         $user = User::find(Auth::user()->id);
         $teams = $this->teamLogic->getUserTeams($user->id, ["Member", "Owner"], $request->team_name);
         $invites = $this->teamLogic->getUserTeams($user->id, ["Pending"], $request->team_name);
 
         return view("teams")
-            ->with("old", $old)
             ->with("teams", $teams)
             ->with("invites", $invites);
     }
