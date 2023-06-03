@@ -9,10 +9,56 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TeamLogic
 {
+    public const PATTERN = [
+        'isometric',
+        'zig-zag',
+        'zig-zag-flat',
+        'wavy',
+        'triangle',
+        'triangle-2',
+        'moon',
+        'rect',
+        'box',
+        'polka',
+        'polka-2',
+        'paper',
+        'line-bold-horizontal',
+        'line-bold-vertical',
+        'line-thin-diagonal',
+    ];
+
+
     /**
      * get all registered teams of a given user
      *
-     * @param int $userId user id
+     * @param int $user_id owner id
+     * @param string $team_name team name
+     * @param string $team_description team description
+     *
+     * @return Team created team
+     */
+    function createTeam(int $user_id, string $team_name, string $team_description)
+    {
+        $selected_pattern = TeamLogic::PATTERN[array_rand(TeamLogic::PATTERN)];
+        $newTeam = Team::create([
+            "name" => $team_name,
+            "description" => $team_description,
+            "pattern" => $selected_pattern
+        ]);
+
+        UserTeam::create([
+            "user_id" => $user_id,
+            "team_id" => $newTeam->id,
+            "status" => "Owner"
+        ]);
+
+        return $newTeam;
+    }
+
+    /**
+     * get all registered teams of a given user
+     *
+     * @param int $user_id user id
      *
      * @return Collection<int, Team> team where user is a member
      */
@@ -20,7 +66,7 @@ class TeamLogic
     {
         $teams = User::find($user_id)->teams()
             ->wherePivotIn("status", $status)
-            ->where("name", "LIKE", "%".$team_name."%")
+            ->where("name", "LIKE", "%" . $team_name . "%")
             ->get();
 
         return $teams;
