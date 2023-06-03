@@ -38,14 +38,14 @@
                 }
             }
 
-            static async show(key) {
+            static async show(key, payload) {
                 const template = ModalView.modal_template[key];
                 if (!template) return;
                 ModalView.clear();
                 const callbackFn = ModalView.modal_init_callback[key];
                 const content = template.content.cloneNode(true);
                 ModalView.modal_body.append(content);
-                if (callbackFn) await callbackFn(ModalView.modal_body);
+                if (callbackFn) await callbackFn(ModalView.modal_body, payload);
                 ModalView.el.style.display = "flex";
             }
 
