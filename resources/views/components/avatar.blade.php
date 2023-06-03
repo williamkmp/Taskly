@@ -7,7 +7,7 @@
 @endif
 
 @php
-    $full_name = $name;
+    $full_name = strtoupper($name);
     $initials = '';
     $name_array = explode(' ', $full_name);
     foreach ($name_array as $name) {
