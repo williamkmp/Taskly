@@ -17,13 +17,14 @@ class UserSeeder extends Seeder
             "name" => "William Kurnia Mulyadi Putra",
             "email" => "william@email.com",
             "password" => bcrypt("password"),
-            "image_path" => "image/user/1.jpg",
+            "image_path" => "image/user/4.png",
         ]);
 
         User::create([
             "name" => "Sevien",
             "email" => "sevien@email.com",
-            "password" => bcrypt("password")
+            "password" => bcrypt("password"),
+            "image_path" => "image/user/1.png",
         ]);
 
         User::create([
