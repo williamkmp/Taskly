@@ -20,7 +20,7 @@
 @endphp
 
 <div data-role="avatar"
-    {{ $attributes->merge(['class' => 'relative aspect-square flex flex-wrap items-center justify-center gap-2 overflow-hidden text-lg font-semibold text-center text-white bg-black rounded-full cursor-default select-none border border-gray-200']) }}>
+    {{ $attributes->merge(['class' => 'relative aspect-square flex flex-wrap items-center justify-center gap-2 overflow-hidden text-lg font-semibold text-center text-white bg-black rounded-full cursor-default select-none border-2 border-gray-200']) }}>
     @if (isset($action) || isset($href))
         @if (isset($action))
             <div onclick="{{ $action }}" class="absolute top-0 left-0 z-10 w-full h-full">
