@@ -17,6 +17,7 @@ class Team extends Model
     protected $fillable = [
         'name',
         'description',
+        'pattern',
         'image_path',
     ];
 
