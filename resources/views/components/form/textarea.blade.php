@@ -13,6 +13,6 @@
             @isset($placeholder) placeholder="{{ $placeholder }}" @endisset name="{{ $name }}"
             id="textarea-{{ $name }}" @isset($required) required @endisset
             @isset($autofocus) autofocus @endisset
-            @isset($rows) rows="{{ $rows }}" @endisset>{{ $slot }}</textarea>
+            @isset($rows) rows="{{ $rows }}" @endisset>@isset($value){{ $value }}@endisset</textarea>
     </div>
 </div>
