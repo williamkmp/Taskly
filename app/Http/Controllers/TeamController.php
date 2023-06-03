@@ -13,17 +13,15 @@ use Illuminate\Http\Response as HttpResponse;
 
 class TeamController extends Controller
 {
-    public function __construct
-    (
+    public function __construct(
         protected TeamLogic $teamLogic,
         protected FileLogic $fileLogic
-    )
-    {
+    ) {
     }
 
     public function createTeam(Request $request)
     {
-         $request->validate([
+        $request->validate([
             "team_name" => "required|min:5|max:30",
             "team_description" => "required|min:5|max:225"
         ]);
@@ -37,7 +35,7 @@ class TeamController extends Controller
         return redirect()->route("viewTeam", ['team_id' => $createdTeam->id]);
     }
 
-    public function updateIamge(Request $request)
+    public function updateImage(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'image' => "required|mimes:jpg,jpeg,png|max:10240",
@@ -56,7 +54,6 @@ class TeamController extends Controller
 
     public function showTeams()
     {
-
         $user = User::find(Auth::user()->id);
         $teams = $this->teamLogic->getUserTeams($user->id, ["Member", "Owner"]);
         $invites = $this->teamLogic->getUserTeams($user->id, ["Pending"]);
@@ -80,7 +77,7 @@ class TeamController extends Controller
     public function search(Request $request)
     {
         $validator = Validator::make($request->all(), ["team_name" => "required"]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect()->route("home");
         }
 
