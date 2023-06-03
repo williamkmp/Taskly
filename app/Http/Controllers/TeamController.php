@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Logic\FileLogic;
 use App\Logic\TeamLogic;
 use App\Models\Team;
 use App\Models\User;
@@ -12,29 +13,13 @@ use Illuminate\Http\Response as HttpResponse;
 
 class TeamController extends Controller
 {
-    public function __construct(protected TeamLogic $teamLogic)
+    public function __construct
+    (
+        protected TeamLogic $teamLogic,
+        protected FileLogic $fileLogic
+    )
     {
     }
-
-    // public function createTeam(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         "team_name" => "required|min:5|max:30",
-    //         "team_description" => "required|min:5|max:225"
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json($validator->messages(), HttpResponse::HTTP_BAD_REQUEST);
-    //     }
-
-    //     $createdTeam = $this->teamLogic->createTeam(
-    //         Auth::user()->id,
-    //         $request->team_name,
-    //         $request->team_description,
-    //     );
-
-    //     return response()->json(["redirectUrl" => route("viewTeam", ["team_id" => $createdTeam->id])], HttpResponse::HTTP_OK);
-    // }
 
     public function createTeam(Request $request)
     {
@@ -52,6 +37,22 @@ class TeamController extends Controller
         return redirect()->route("viewTeam", ['team_id' => $createdTeam->id]);
     }
 
+    public function updateIamge(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => "required|mimes:jpg,jpeg,png|max:10240",
+            'team_id' => "required"
+        ]);
+
+        $registeredTeam = Team::find(intval($request->team_id));
+
+        if ($validator->fails() || $registeredTeam == null) {
+            return response()->json($validator->messages(), HttpResponse::HTTP_BAD_REQUEST);
+        }
+
+        $this->fileLogic->storeTeamImage($registeredTeam->id, $request, "image");
+        return response()->json(["message" => "success"]);
+    }
 
     public function showTeams()
     {
@@ -69,8 +70,11 @@ class TeamController extends Controller
     {
         $team_id = intval($team_id);
         $selected_team = Team::find($team_id);
+        $team_owner = $this->teamLogic->getTeamOwner($selected_team->id);
+
         return view("team")
-            ->with("team", $selected_team);
+            ->with("team", $selected_team)
+            ->with("owner", $team_owner);
     }
 
     public function search(Request $request)
