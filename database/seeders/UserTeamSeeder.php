@@ -29,15 +29,16 @@ class UserTeamSeeder extends Seeder
                 "test@email.com"
             ],
             "Adins" => [
-                "william@email.com",
                 "filipus@email.com ",
                 "owen@email.com",
                 "test@email.com",
+                "william@email.com",
             ],
             "Laravel" => [
                 "filipus@email.com ",
                 "owen@email.com",
                 "test@email.com",
+                "william@email.com"
             ]
         ];
 
@@ -45,26 +46,19 @@ class UserTeamSeeder extends Seeder
         foreach ($allTeam as $team) {
             $emailList = $emailMap[$team->name];
             if ($emailList == null) continue;
-            foreach ($emailList as $userEmail) {
+            foreach ($emailList as $key => $userEmail) {
+                $status = 'Member';
+                if($key == array_key_first($emailList)) $status = "Owner";
+                if($key == array_key_last($emailList)) $status = "Pending";
+
                 $user = User::where("email", $userEmail)->first();
                 if ($user == null) continue;
                 UserTeam::create([
                     "user_id" => $user->id,
                     "team_id" => $team->id,
-                    "status" => "Member"
+                    "status" => $status
                 ]);
             }
         }
-
-        $william = User::where("email", "william@email.com")->first();
-        $william->teamRelations()->update(["status" => "Owner"]);
-
-        $laravelTeam = Team::where("name", "Laravel")->first();
-        UserTeam::create([
-            "user_id" => $william->id,
-            "team_id" => $laravelTeam->id,
-            "status" => "Pending",
-        ]);
-
     }
 }
