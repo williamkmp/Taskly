@@ -89,10 +89,12 @@ class TeamController extends Controller
         $team_id = intval($team_id);
         $selected_team = Team::find($team_id);
         $team_owner = $this->teamLogic->getTeamOwner($selected_team->id);
+        $team_members = $this->teamLogic->getTeamMember($selected_team->id);
 
         return view("team")
             ->with("team", $selected_team)
-            ->with("owner", $team_owner);
+            ->with("owner", $team_owner)
+            ->with("members", $team_members);
     }
 
     public function search(Request $request)
