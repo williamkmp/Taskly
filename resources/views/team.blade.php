@@ -18,8 +18,9 @@
                 <form action="{{ route('doTeamDataUpdate') }}" method="POST" class="flex flex-col gap-4">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
-                    <x-form.text name="team_name" label="Team's Name" value="{{ $team->name }}" required/>
-                    <x-form.textarea name="team_description" label="Team's Description" value="{{ $team->description }}" required/>
+                    <x-form.text name="team_name" label="Team's Name" value="{{ $team->name }}" required />
+                    <x-form.textarea name="team_description" label="Team's Description" value="{{ $team->description }}"
+                        required />
                     <x-form.button class="mt-4" type="submit" primary>Submit</x-form.button>
                 </form>
             </div>
@@ -31,7 +32,7 @@
             <div class="w-full h-36 bg-pattern-{{ $team->pattern }} border-b border-gray-200"></div>
             <div class="flex items-center w-full gap-6 px-6 overflow-auto">
                 @if (Auth::user()->id == $owner->id)
-                    <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}" class="w-20 text-4xl"
+                    <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}" class="w-20 !text-4xl"
                         action="ModalView.show('changeProfile')">
                         <div
                             class="flex flex-wrap items-center justify-center w-full h-full transition-all bg-black opacity-0 hover:opacity-70">
@@ -39,14 +40,15 @@
                         </div>
                     </x-avatar>
                 @else
-                    <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}" class="w-20 text-4xl" />
+                    <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}" class="w-20 !text-4xl" />
                 @endif
 
                 <div class="flex flex-col justify-center flex-grow h-full gap-2 max-w-[40rem] mr-auto">
                     <div class="flex items-center gap-6">
                         <h1 class="text-3xl font-bold">{{ $team->name }}</h1>
                         @if (Auth::user()->id == $owner->id)
-                            <x-form.button outline type="button" action="ModalView.show('updateTeam')" class=" !border-2 !text-sm w-min h-min">
+                            <x-form.button outline type="button" action="ModalView.show('updateTeam')"
+                                class="!border-2 !text-sm w-min h-min !px-4">
                                 <x-fas-pen class="w-4 h-4" />
                                 Edit..
                             </x-form.button>
@@ -55,12 +57,12 @@
                     <p>{{ $team->description }}</p>
                 </div>
 
-                <article class="h-full py-2 w-max rounded-xl">
+                <article class="h-full py-2 w-80 rounded-xl">
                     <div class="grid items-center grid-cols-[6rem_1fr] grid-rows-2">
                         <p class="font-bold">Owner: </p>
-                        <div class="flex items-center w-full gap-2">
-                            <x-avatar name="{{ $owner->name }}" asset="{{ $owner->image_path }}" class="h-10" />
-                            <p>{{ $owner->name }}</p>
+                        <div class="flex items-center w-full gap-2 truncate">
+                            <x-avatar name="{{ $owner->name }}" asset="{{ $owner->image_path }}" class="w-10" />
+                            <p class="truncate">{{ $owner->name }}</p>
                         </div>
 
                         <p class="font-bold">Created: </p>
@@ -69,6 +71,70 @@
                 </article>
             </div>
         </header>
+
+        <div class="flex flex-grow gap-16 p-6 mt-6 ">
+            <section class="flex flex-col flex-grow gap-6">
+                <header>
+                    <h2 class="text-3xl font-bold">My Teams</h2>
+                </header>
+
+                <hr>
+
+                <div class="flex flex-wrap gap-x-8 gap-y-6">
+                    @if (Auth::user()->id == $owner->id)
+                        <div onclick="ModalView.show('createTeam')"
+                            class="flex flex-col items-center justify-center gap-2 text-gray-400 transition duration-300 bg-gray-100 shadow-md cursor-pointer select-none w-72 h-52 rounded-xl hover:shadow-2xl">
+                            <x-fas-plus class="w-8 h-8" />
+                            <p>Create Team</p>
+                        </div>
+                    @endif
+
+                    {{-- @foreach ($teams as $team)
+                        <a
+                            href="{{ route('viewTeam', ['team_id' => $team->id]) }}"
+                            class="flex cursor-pointer select-none flex-col transition duration-300 border border-gray-200 shadow-xl rounded-xl h-52 w-72 hover:shadow-2xl bg-pattern-{{ $team->pattern }} overflow-hidden">
+                            <div class="flex-grow w-full "></div>
+                            <article class="flex flex-col w-full h-20 gap-1 px-4 py-2 bg-white border-t border-t-gray-200">
+                                <h3 class="overflow-hidden font-semibold truncate text-bold">{{ $team->name }}</h3>
+                                <p class="flex-grow w-full text-xs break-all line-clamp-2 text-ellipsis max-h-8 ">
+                                    {{ $team->description }} </p>
+                            </article>
+                        </a>
+                    @endforeach --}}
+                </div>
+            </section>
+
+            <div class="w-80 h-full max-h-[40rem] flex flex-col gap-6">
+                <header>
+                    <h2 class="text-3xl font-bold ">Team members</h2>
+                </header>
+                <aside
+                    class="flex flex-col w-full h-full gap-4 p-4 overflow-x-hidden overflow-y-auto border-2 border-gray-200 rounded-xl">
+                    @if (Auth::user()->id == $owner->id)
+                        <x-form.button primary type="button" class="!border-2 !text-sm h-min !px-4">
+                            <x-fas-user-plus class="w-4 h-4" />
+                            Manage Members
+                        </x-form.button>
+                    @endif
+
+                    <div class="flex flex-col flex-grow w-full gap-2 overflow-x-hidden overflow-y-auto">
+                        <div class="flex items-center gap-4">
+                            <x-avatar name="{{ $owner->name }}" asset="{{ $owner->image_path }}" class="w-12" />
+                            <p class="truncate">{{ $owner->name }}</p>
+                            <x-fas-crown class="w-6 h-6 text-yellow-400" />
+                        </div>
+
+                        @foreach ($members as $member)
+                            <div class="flex items-center gap-4">
+                                <x-avatar name="{{ $member->name }}" asset="{{ $member->image_path }}" class="w-12" />
+                                <p class="truncate">{{ $member->name }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                </aside>
+            </div>
+        </div>
+
     </div>
 @endsection
 
