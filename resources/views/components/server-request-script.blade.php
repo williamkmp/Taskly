@@ -17,10 +17,10 @@
         });
     }
 
-    function getResponseError(error){
-        if(!error) return null;
+    function getResponseError(error) {
+        if (!error) return null;
         let response = error.response;
-        if(!response) return null;
+        if (!response) return null;
         let firstError = response[Object.keys(response)[0]];
         return firstError?.pop();
     }
@@ -56,6 +56,33 @@
                         reject(error);
                     });
             });
+        }
+    }
+
+    class DOM {
+        static id = 0;
+
+        static create(template) {
+            let temp = document.createElement("DIV");
+            temp.innerHTML = template;
+            return temp.children[0];
+        }
+
+        static find(selector) {
+            return document.querySelector(selector);
+        }
+
+        static findAll(selector) {
+            return Array.from(document.querySelectorAll(selector));
+        }
+
+        static log(a) {
+            console.log(a)
+        }
+
+        static newid(){
+            this.id++;
+            return this.id;
         }
     }
 </script>
