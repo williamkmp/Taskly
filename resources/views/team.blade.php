@@ -86,7 +86,7 @@
                 <hr />
 
                 <form class="flex items-center w-full gap-4" id="search-form" action="{{ route("searchBoard") }}"
-                    method="POST">
+                    method="GEt">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
                     <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
