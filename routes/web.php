@@ -20,8 +20,10 @@ Route::middleware(["auth", "auth.session"])->post("team", [TeamController::class
 Route::middleware(["auth", "auth.session"])->get("team/search", [TeamController::class, "search"])->name("searchTeam");
 Route::middleware(["auth", "auth.session"])->get("team/invite/accept/{user_id}/{team_id}", [TeamController::class, "acceptInvite"])->name("acceptTeamInvite");
 Route::middleware(["auth", "auth.session"])->get("team/invite/reject/{user_id}/{team_id}", [TeamController::class, "rejectInvite"])->name("rejectTeamInvite");
-Route::middleware(["auth", "auth.session"])->get("team/getinvite/{user_id}/{team_id}", [TeamController::class, "getInvite"])->name("getInvite");
+Route::middleware(["auth", "auth.session"])->get("team/invite/{user_id}/{team_id}", [TeamController::class, "getInvite"])->name("getInvite");
+Route::middleware(["auth", "auth.session"])->post("team/invite", [TeamController::class, "inviteMembers"])->name("doInviteMembers");
 Route::middleware(["auth", "auth.session"])->get("team/board/search", [TeamController::class, "searchBoard"])->name("searchBoard");
+Route::middleware(["auth", "auth.session"])->post("team/board/delete", [TeamController::class, "deleteMembers"])->name("deleteTeamMember");
 Route::middleware(["auth", "auth.session"])->get("team/view/{team_id}", [TeamController::class, "showTeam"])->name("viewTeam");
 Route::middleware(["auth", "auth.session"])->post("team/update/profile", [TeamController::class, "updateData"])->name("doTeamDataUpdate");
 Route::middleware(["auth", "auth.session"])->post("team/update/picture", [TeamController::class, "updateImage"])->name("doChangeTeamImage");
