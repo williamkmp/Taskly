@@ -25,7 +25,6 @@
                         <x-fas-magnifying-glass class="w-4 h-4" />Search
                     </x-form.button>
                 </div>
-
             </form>
         </header>
 
