@@ -90,6 +90,15 @@ class TeamController extends Controller
     public function showTeam($team_id)
     {
         $team_id = intval($team_id);
+        $isAuthorized = UserTeam::where("user_id", Auth::user()->id)
+            ->where("team_id", $team_id)
+            ->whereNot("status", "Pending")
+            ->first();
+
+        if($isAuthorized == null){
+            return redirect()->back()->with('notif',["You don't have access for that team, please try again or cantact the owner."]);
+        }
+
         $selected_team = Team::find($team_id);
         $team_owner = $this->teamLogic->getTeamOwner($selected_team->id);
         $team_members = $this->teamLogic->getTeamMember($selected_team->id);
@@ -201,5 +210,46 @@ class TeamController extends Controller
         $userInvite->delete();
 
         return redirect()->back()->with("notif", ["Success\nInvite is rejected"]);
+    }
+
+    public function deleteMembers(Request $request)
+    {
+        $team_id = intval($request->team_id);
+
+        $deletedUser = User::whereIn("email", $request->emails)->get();
+
+        foreach ($deletedUser as $user) {
+            UserTeam::where("team_id", $team_id)
+                ->where("user_id", $user->id)
+                ->where("status", "Member")
+                ->delete();
+        }
+
+
+        return response()->json(["message" => "delete success"]);
+    }
+
+    public function inviteMembers(Request $request)
+    {
+        $emails = $request->emails;
+        $team_id = intval($request->team_id);
+
+        foreach ($emails as $email) {
+            $user = User::where("email", $email)->first();
+            if ($user == null) continue;
+            $existingInvite = UserTeam::where('user_id', $user->id)
+                ->where('team_id', $team_id)
+                ->first();
+
+            if ($existingInvite != null) continue;
+
+            UserTeam::create([
+                "user_id" => $user->id,
+                "team_id" => $team_id,
+                "status" => "Pending"
+            ]);
+        }
+
+        return redirect()->back()->with('notif', ["Success\nInvite sent, please wait."]);
     }
 }
