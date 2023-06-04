@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Logic\FileLogic;
 use App\Logic\TeamLogic;
+use App\Logic\UserLogic;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\UserTeam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -15,7 +17,8 @@ class TeamController extends Controller
 {
     public function __construct(
         protected TeamLogic $teamLogic,
-        protected FileLogic $fileLogic
+        protected FileLogic $fileLogic,
+        protected UserLogic $userLogic,
     ) {
     }
 
@@ -45,7 +48,7 @@ class TeamController extends Controller
         $team_id = intval($request->team_id);
         $selectedTeam = Team::find($team_id);
 
-        if($selectedTeam == null){
+        if ($selectedTeam == null) {
             return redirect()->back()->withErrors("This team is alredy deleted please contact team owner");
         }
 
@@ -135,5 +138,68 @@ class TeamController extends Controller
             ->with("team", $selected_team)
             ->with("owner", $team_owner)
             ->with("members", $team_members);
+    }
+
+    public function getInvite($user_id, $team_id)
+    {
+        $user_id = intval($user_id);
+        $team_id = intval($team_id);
+
+        $owner = $this->teamLogic->getTeamOwner($team_id);
+        $team = Team::find($team_id);
+        $owner_initials = $this->userLogic->getInitials($owner->name);
+        $team_initials = $this->userLogic->getInitials($team->name);
+
+        return response()->json([
+            "owner_name" => $owner->name,
+            "owner_initial" => $owner_initials,
+            "owner_image" => $owner->image_path,
+            "team_name" => $team->name,
+            "team_initial" => $team_initials,
+            "team_description" => $team->description,
+            "team_image" => $team->image_path,
+            "team_pattern" => $team->pattern,
+            "accept_url" => route('acceptTeamInvite', ["user_id" => $user_id, "team_id" => $team_id]),
+            "reject_url" => route('rejectTeamInvite', ["user_id" => $user_id, "team_id" => $team_id]),
+        ]);
+    }
+
+    public function acceptInvite($user_id, $team_id)
+    {
+        $user_id = intval($user_id);
+        $team_id = intval($team_id);
+
+        $userInvite = UserTeam::all()
+            ->where("user_id", $user_id)
+            ->where("team_id", $team_id)
+            ->first();
+
+        if ($userInvite == null) {
+            return redirect()->back()->with("notif", ["Error\nThe invite not found, it is either canceled or expired contacet the team owner."]);
+        }
+
+        $userInvite->status = "Member";
+        $userInvite->save();
+
+        return redirect()->back()->with("notif", ["Success\nInvite is accepted"]);
+    }
+
+    public function rejectInvite($user_id, $team_id)
+    {
+        $user_id = intval($user_id);
+        $team_id = intval($team_id);
+
+        $userInvite = UserTeam::all()
+            ->where("user_id", $user_id)
+            ->where("team_id", $team_id)
+            ->first();
+
+        if ($userInvite == null) {
+            return redirect()->back();
+        }
+
+        $userInvite->delete();
+
+        return redirect()->back()->with("notif", ["Success\nInvite is rejected"]);
     }
 }
