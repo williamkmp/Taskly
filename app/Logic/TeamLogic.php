@@ -54,6 +54,7 @@ class TeamLogic
 
         return $newTeam;
     }
+
     /**
      * get the owner of a certain team
      *
@@ -71,6 +72,22 @@ class TeamLogic
         $owner = User::find($team_user_pivot->user_id);
 
         return $owner;
+    }
+
+    /**
+     * get the list of member from a certain team
+     *
+     * @param int $team_id team id
+     *
+     * @return Collection<int, User> list of team member
+     */
+    function getTeamMember(int $team_id)
+    {
+        $team_members = Team::find($team_id)->users()
+            ->wherePivot("status", "Member")
+            ->get();
+
+        return $team_members;
     }
 
     /**
