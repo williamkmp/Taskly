@@ -104,7 +104,6 @@ class TeamController extends Controller
             return redirect()->route("home");
         }
 
-        // @php-ignore
         $request->session()->flash("__old_team_name", $request->team_name);
         $user = User::find(Auth::user()->id);
         $teams = $this->teamLogic->getUserTeams($user->id, ["Member", "Owner"], $request->team_name);
@@ -113,5 +112,28 @@ class TeamController extends Controller
         return view("teams")
             ->with("teams", $teams)
             ->with("invites", $invites);
+    }
+
+    public function searchBoard(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "team_id" => "required|integer",
+            "user_id" => "required|integer",
+            "board_name" => "required",
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route("viewTeam", ["team_id" => intval($request->team_id)]);
+        }
+
+        $request->session()->flash("__old_board_name", $request->board_name);
+        $team_id = intval($request->team_id);
+        $selected_team = Team::find($team_id);
+        $team_owner = $this->teamLogic->getTeamOwner($selected_team->id);
+        $team_members = $this->teamLogic->getTeamMember($selected_team->id);
+
+        return view("team")
+            ->with("team", $selected_team)
+            ->with("owner", $team_owner)
+            ->with("members", $team_members);
     }
 }
