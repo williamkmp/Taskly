@@ -161,7 +161,7 @@
             const btnNo = modal.querySelector("#btn-no");
 
             const response = await ServerRequest.get(
-                `{{ url('team/getinvite/' . Auth::user()->id) }}/${payload.team_id}`)
+                `{{ url('team/invite/' . Auth::user()->id) }}/${payload.team_id}`)
 
             header.classList.add(`bg-pattern-${response.data.team_pattern}`);
             teamDescription.textContent = response.data.team_description;
