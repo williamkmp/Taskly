@@ -25,4 +25,19 @@ class UserLogic
         $newUser->save();
         return $newUser;
 	}
+
+    public function getInitials(string $user_name)
+    {
+        $full_name = strtoupper($user_name);
+        $initials = '';
+        $name_array = explode(' ', $full_name);
+        foreach ($name_array as $name) {
+            $initials .= substr($name, 0, 1);
+        }
+
+        if (strlen($initials) >= 2) {
+            $initials = substr($initials, 0, 2);
+        }
+        return $initials;
+    }
 }
