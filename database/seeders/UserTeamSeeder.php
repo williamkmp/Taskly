@@ -35,9 +35,9 @@ class UserTeamSeeder extends Seeder
                 "william@email.com",
             ],
             "Laravel" => [
+                "test@email.com",
                 "filipus@email.com ",
                 "owen@email.com",
-                "test@email.com",
                 "william@email.com"
             ]
         ];
