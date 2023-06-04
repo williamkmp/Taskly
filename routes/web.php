@@ -18,6 +18,7 @@ Route::middleware("guest")->post("auth/register", [AuthController::class, "doReg
 Route::middleware(["auth", "auth.session"])->get("team", [TeamController::class, "showTeams"])->name("home");
 Route::middleware(["auth", "auth.session"])->post("team", [TeamController::class, "createTeam"])->name("doCreateTeam");
 Route::middleware(["auth", "auth.session"])->post("team/search", [TeamController::class, "search"])->name("searchTeam");
+Route::middleware(["auth", "auth.session"])->post("team/board/search", [TeamController::class, "searchBoard"])->name("searchBoard");
 Route::middleware(["auth", "auth.session"])->get("team/view/{team_id}", [TeamController::class, "showTeam"])->name("viewTeam");
 Route::middleware(["auth", "auth.session"])->post("team/update/profile", [TeamController::class, "updateData"])->name("doTeamDataUpdate");
 Route::middleware(["auth", "auth.session"])->post("team/update/picture", [TeamController::class, "updateImage"])->name("doChangeTeamImage");
