@@ -16,6 +16,7 @@ class Board extends Model
      */
     protected $fillable = [
         'name',
+        'team_id',
         'pattern',
         'image_path',
     ];
