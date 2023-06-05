@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BoardController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,9 @@ Route::middleware(["auth", "auth.session"])->post("team/board/delete", [TeamCont
 Route::middleware(["auth", "auth.session"])->get("team/view/{team_id}", [TeamController::class, "showTeam"])->name("viewTeam");
 Route::middleware(["auth", "auth.session"])->post("team/update/profile", [TeamController::class, "updateData"])->name("doTeamDataUpdate");
 Route::middleware(["auth", "auth.session"])->post("team/update/picture", [TeamController::class, "updateImage"])->name("doChangeTeamImage");
+
+Route::middleware(["auth", "auth.session"])->post("board", [BoardController::class, "createBoard"])->name("createBoard");
+Route::middleware(["auth", "auth.session"])->get("board/{board_id}", [BoardController::class, "showBoard"])->name("board");
 
 Route::middleware(["auth", "auth.session"])->get("user/setting", [UserController::class, "showSetting"])->name("setting");
 Route::middleware(["auth", "auth.session"])->get("user/logout", [UserController::class, "logout"])->name("doLogout");

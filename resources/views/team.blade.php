@@ -30,7 +30,7 @@
             <div class="flex flex-col w-full gap-4 p-4">
                 <h1 class="text-3xl font-bold">Create Board</h1>
                 <hr>
-                <form action="{{ route('doTeamDataUpdate') }}" method="POST" class="flex flex-col gap-4">
+                <form action="{{ route('createBoard') }}" method="POST" class="flex flex-col gap-4">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
                     <x-form.text name="board_name" label="Board's Name" required />
@@ -174,7 +174,7 @@
                 <hr />
 
                 <section class="flex flex-col gap-4">
-                    <header class="flex items-center gap-2">
+                    <header class="flex items-center gap-2 pl-1">
                         <x-form.button type="button" outline class="w-min !border-2 !p-2"
                             action="ModalView.show('createBoard')">
                             <x-fas-plus class="w-4 h-4" />
@@ -196,7 +196,7 @@
                         </x-form.button>
                     </form>
 
-                    <div class="flex flex-wrap gap-x-8 gap-y-6">
+                    <div class="flex flex-wrap mt-2 gap-x-8 gap-y-6">
 
                         @if ($boards->isEmpty())
                             <div onclick="ModalView.show('createBoard')"
