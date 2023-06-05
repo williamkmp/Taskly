@@ -26,6 +26,19 @@
             </div>
         </template>
 
+        <template is-modal="createBoard">
+            <div class="flex flex-col w-full gap-4 p-4">
+                <h1 class="text-3xl font-bold">Create Board</h1>
+                <hr>
+                <form action="{{ route('doTeamDataUpdate') }}" method="POST" class="flex flex-col gap-4">
+                    @csrf
+                    <input type="hidden" name="team_id" value="{{ $team->id }}">
+                    <x-form.text name="board_name" label="Board's Name" required />
+                    <x-form.button class="mt-4" type="submit" primary>Submit</x-form.button>
+                </form>
+            </div>
+        </template>
+
         <template is-modal="manageMember" class="bg-red-200">
             <div class="flex flex-col w-full gap-4 p-4">
                 <h1 class="text-3xl font-bold">Manage Members</h1>
@@ -43,7 +56,8 @@
                                     class="flex flex-col items-center justify-center w-32 gap-2 p-2 overflow-hidden border-2 border-gray-300 cursor-pointer select-none h-36 rounded-xl">
                                     <x-avatar name="{{ $member->name }}" asset="{{ $member->image_path }}"
                                         class="!flex-shrink-0 !flex-grow-0 w-12" />
-                                    <p class="w-full h-8 text-xs font-bold text-center line-clamp-2">{{ $member->name }}</p>
+                                    <p class="w-full h-8 text-xs font-bold text-center line-clamp-2">{{ $member->name }}
+                                    </p>
                                     <p class="w-full h-8 text-xs font-normal text-center line-clamp-2">{{ $member->email }}
                                     </p>
                                 </div>
@@ -71,7 +85,7 @@
                         </x-form.button>
                     </div>
 
-                    <form method="POST" id="invite-members-fomr" action="{{ route('doInviteMembers') }}"
+                    <form method="POST" id="invite-members-form" action="{{ route('doInviteMembers') }}"
                         class="flex justify-center w-full p-4 overflow-hidden overflow-y-auto border-2 border-black h-80 rounded-xl">
                         @csrf
                         <input type="hidden" name="team_id", value="{{ $team->id }}">
@@ -90,7 +104,7 @@
                         </div>
                     </form>
 
-                    <x-form.button primary type="submit" id="save-btn" form="invite-members-fomr">Save</x-form.button>
+                    <x-form.button primary type="submit" id="save-btn" form="invite-members-form">Save</x-form.button>
                 </div>
             </div>
         </template>
@@ -159,19 +173,54 @@
 
                 <hr />
 
-                <form class="flex items-center w-full gap-4" id="search-form" action="{{ route('searchBoard') }}"
-                    method="GET">
-                    @csrf
-                    <input type="hidden" name="team_id" value="{{ $team->id }}">
-                    <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
-                    <x-form.text icon="fas-table-columns" name="board_name" placeholder="Boards's name"
-                        value="{{ session('__old_board_name') }}" />
+                <section class="flex flex-col gap-4">
+                    <header class="flex items-center gap-2">
+                        <x-form.button type="button" outline class="w-min !border-2 !p-2"
+                            action="ModalView.show('createBoard')">
+                            <x-fas-plus class="w-4 h-4" />
+                        </x-form.button>
+                        <h2 class="text-3xl font-bold">Boards</h2>
+                    </header>
 
-                    <x-form.button type="submit" primary class="h-full w-min">
-                        <x-fas-magnifying-glass class="w-4 h-4" />Search
-                    </x-form.button>
+                    {{-- Search Bar --}}
+                    <form class="flex items-center w-full gap-4" id="search-form" action="{{ route('searchBoard') }}"
+                        method="GET">
+                        @csrf
+                        <input type="hidden" name="team_id" value="{{ $team->id }}">
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                        <x-form.text icon="fas-table-columns" name="board_name" placeholder="Boards's name"
+                            value="{{ session('__old_board_name') }}" />
 
-                </form>
+                        <x-form.button type="submit" outline class="h-full w-min">
+                            <x-fas-magnifying-glass class="w-4 h-4" />Search
+                        </x-form.button>
+                    </form>
+
+                    <div class="flex flex-wrap gap-x-8 gap-y-6">
+
+                        @if ($boards->isEmpty())
+                            <div onclick="ModalView.show('createBoard')"
+                                class="flex flex-col items-center justify-center gap-2 text-gray-400 transition duration-300 bg-gray-100 shadow-md cursor-pointer select-none w-72 h-52 rounded-xl hover:shadow-2xl">
+                                <x-fas-plus class="w-8 h-8" />
+                                <p>Create Board</p>
+                            </div>
+                        @endif
+
+
+                        @foreach ($boards as $board)
+                            <a href="{{ route('viewTeam', ['team_id' => $board->id]) }}"
+                                class="flex cursor-pointer select-none flex-col transition duration-300 border border-gray-200 shadow-xl rounded-xl h-32 w-72 hover:shadow-2xl bg-pattern-{{ $board->pattern }} overflow-hidden">
+                                <div class="flex-grow w-full p-4">
+                                    <x-avatar name="{{ $board->name }}" asset="{{ $board->image_path }}"
+                                        class="h-12" />
+                                </div>
+                                <article class="flex flex-col w-full gap-1 px-4 py-2 bg-white border-t border-t-gray-200">
+                                    <h3 class="overflow-hidden font-semibold truncate text-bold">{{ $board->name }}</h3>
+                                </article>
+                            </a>
+                        @endforeach
+                    </div>
+                </section>
 
             </section>
 
@@ -317,7 +366,7 @@
 
                 addBtn.addEventListener('click', handleInsert);
 
-                saveBtn.addEventListener('click', () =>  PageLoader.show());
+                saveBtn.addEventListener('click', () => PageLoader.show());
 
                 function handleInsert() {
                     const email = emailField.value.trim();
