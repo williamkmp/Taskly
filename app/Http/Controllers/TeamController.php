@@ -90,23 +90,22 @@ class TeamController extends Controller
     public function showTeam($team_id)
     {
         $team_id = intval($team_id);
-        $isAuthorized = UserTeam::where("user_id", Auth::user()->id)
-            ->where("team_id", $team_id)
-            ->whereNot("status", "Pending")
-            ->first();
+        $user_id = Auth::user()->id;
 
-        if($isAuthorized == null){
+        if($this->teamLogic->userHasAccsess($user_id, $team_id)){
             return redirect()->back()->with('notif',["You don't have access for that team, please try again or cantact the owner."]);
         }
 
         $selected_team = Team::find($team_id);
         $team_owner = $this->teamLogic->getTeamOwner($selected_team->id);
         $team_members = $this->teamLogic->getTeamMember($selected_team->id);
+        $team_boards = $this->teamLogic->getBoards($selected_team->id);
 
         return view("team")
             ->with("team", $selected_team)
             ->with("owner", $team_owner)
-            ->with("members", $team_members);
+            ->with("members", $team_members)
+            ->with("boards", $team_boards);
     }
 
     public function search(Request $request)
@@ -133,6 +132,14 @@ class TeamController extends Controller
             "user_id" => "required|integer",
             "board_name" => "required",
         ]);
+
+        $team_id = intval($request->team_id);
+        $user_id = Auth::user()->id;
+
+        if($this->teamLogic->userHasAccsess($user_id, $team_id)){
+            return redirect()->route("showTeams")->with('notif',["You don't have access for that team, please try again or cantact the owner."]);
+        }
+
         if ($validator->fails()) {
             return redirect()->route("viewTeam", ["team_id" => intval($request->team_id)]);
         }
@@ -142,11 +149,13 @@ class TeamController extends Controller
         $selected_team = Team::find($team_id);
         $team_owner = $this->teamLogic->getTeamOwner($selected_team->id);
         $team_members = $this->teamLogic->getTeamMember($selected_team->id);
+        $team_boards = $this->teamLogic->getBoards($selected_team->id, $request->board_name);
 
         return view("team")
             ->with("team", $selected_team)
             ->with("owner", $team_owner)
-            ->with("members", $team_members);
+            ->with("members", $team_members)
+            ->with("boards", $team_boards);
     }
 
     public function getInvite($user_id, $team_id)
