@@ -12,7 +12,7 @@ class BoardLogic
     {
     }
 
-    public function createBoard(int $team_id, int $board_name)
+    public function createBoard(int $team_id, string $board_name)
     {
         $team = Team::find($team_id);
         $teamExist = ($team != null);
