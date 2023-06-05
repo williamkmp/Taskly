@@ -5,7 +5,7 @@
         <aside class="flex flex-col h-full overflow-hidden transition-all border-r-2 border-b-gray-200"
             x-bind:class="sidebar_is_open ? 'w-80' : 'w-0'">
             <h1 id="logo"
-                class="flex items-center justify-center w-full h-20 text-2xl font-extrabold tracking-widest cursor-default select-none">
+                class="flex items-center justify-center w-full h-16 text-2xl font-extrabold tracking-widest cursor-default select-none">
                 Taskly.
             </h1>
 
@@ -29,7 +29,7 @@
         </aside>
 
         <div class="flex flex-col items-center content-center flex-1 h-full overflow-y-auto">
-            <header data-role="app-header" class="sticky flex items-center justify-between w-full h-20 px-6 shadow">
+            <header data-role="app-header" class="sticky flex items-center justify-between w-full h-16 px-6 shadow">
                 <div id="sidebar-button" class="w-6 h-6" x-on:click="sidebar_is_open = !sidebar_is_open">
                     <template x-if="sidebar_is_open">
                         <x-fas-square-caret-left />
