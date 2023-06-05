@@ -2,6 +2,7 @@
 
 namespace App\Logic;
 
+use App\Models\Board;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\UserTeam;
@@ -122,5 +123,41 @@ class TeamLogic
 
         $teamStatus->status = "Member";
         return;
+    }
+
+    /**
+     * get boards of a certain team
+     *
+     * @param int $team_id team id
+     * @param string $search search string (optional)
+     *
+     * @return Collection<int, Board> team's boards where name contains search string
+     */
+    public function getBoards(int $team_id, string $search = "%")
+    {
+        $boards = Team::find($team_id)
+            ->boards()
+            ->where("name", "LIKE", "%".$search."%")
+            ->get();
+
+        return $boards;
+    }
+
+    /**
+     * check if user can access a sertain team
+     *
+     * @param int $user_id user id
+     * @param int $team_id team id
+     *
+     * @return boolean is user has access to team
+     */
+    public function userHasAccsess(int $user_id, int $team_id)
+    {
+        $isAuthorized = UserTeam::where("user_id", $user_id)
+            ->where("team_id", $team_id)
+            ->whereNot("status", "Pending")
+            ->first();
+
+        return ($isAuthorized == null);
     }
 }
