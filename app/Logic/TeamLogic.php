@@ -158,6 +158,6 @@ class TeamLogic
             ->whereNot("status", "Pending")
             ->first();
 
-        return ($isAuthorized == null);
+        return !($isAuthorized == null);
     }
 }
