@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
         $userLogic = new UserLogic();
         $fileLogic = new FileLogic();
         $teamLogic = new TeamLogic();
-        $boardLogic = new BoardLogic($teamLogic);
+        $boardLogic = new BoardLogic();
 
         $this->app->instance(UserLogic::class, $userLogic);
         $this->app->instance(FileLogic::class, $fileLogic);
