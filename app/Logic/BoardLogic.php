@@ -43,14 +43,6 @@ class BoardLogic
         return $createdBoard;
     }
 
-    public function getColumns(int $board_id){
-        $board = Board::find($board_id);
-        if($board == null)
-            return null;
-        $columns = $board->columns()->get();
-        return $columns;
-    }
-
     public function getData(int $board_id)
     {
         $board = Board::with("columns.cards")->where("id", $board_id)->first();
