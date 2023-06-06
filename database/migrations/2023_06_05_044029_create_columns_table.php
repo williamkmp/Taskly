@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('columns', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("board_id")->constrained();
-            $table->foreignId("previous_id")->constrained("columns", "id");
-            $table->foreignId("next_id")->constrained("columns", "id");
             $table->string("name");
+            $table->foreignId("board_id")->constrained()->onDelete("cascade");
+            $table->unsignedBigInteger("previous_id")->nullable();
+            $table->unsignedBigInteger("next_id")->nullable();
+
+            $table->foreign('previous_id')->references('id')->on('columns');
+            $table->foreign('next_id')->references('id')->on('columns');
             $table->timestamps();
         });
     }
