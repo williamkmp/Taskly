@@ -40,14 +40,17 @@ class BoardSeeder extends Seeder
             "next_id" => null,
         ]);
 
-        $col3 = Column::create([
+        $col1->next_id = $col2->id;
+        $col1->save();
+
+        $col1 = Column::create([
             "name" => "Development",
             "board_id" => $board->id,
             "previous_id" => $col2->id,
             "next_id" => null,
         ]);
 
-        $col2->next_id = $col3->id;
+        $col2->next_id = $col1->id;
         $col2->save();
     }
 }

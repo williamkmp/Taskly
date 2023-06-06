@@ -44,10 +44,29 @@ class BoardController extends Controller
         $board = Board::find($board_id);
         $team = Team::find($board->team_id);
         $teamOwner = $this->teamLogic->getTeamOwner($board->team_id);
+        $columns = $this->boardLogic->getColumns($board->id);
 
         return view("board")
-            ->with("board", $board)
             ->with("team", $team)
-            ->with("owner", $teamOwner);
+            ->with("owner", $teamOwner)
+            ->with("board", $board)
+            ->with("columns", $columns)
+            ->with("patterns", BoardLogic::PATTERN);
+    }
+
+    public function updateBoard(Request $request)
+    {
+        $request->validate([
+            "board_id" => "required",
+            "board_name" => "required",
+            "board_pattern" => "required",
+        ]);
+
+        $board = Board::find(intval($request->board_id));
+        $board->name = $request->board_name;
+        $board->pattern = $request->board_pattern;
+        $board->save();
+
+        return redirect()->back()->with("notif", ["Success\nBoard is successfully updated!"]);
     }
 }

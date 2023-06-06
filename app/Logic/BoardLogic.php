@@ -3,6 +3,7 @@
 namespace App\Logic;
 
 use App\Models\Board;
+use App\Models\Column;
 use App\Models\Team;
 use App\Models\User;
 
@@ -22,7 +23,8 @@ class BoardLogic
         'sunset',
         'cosmic',
         'jupiter',
-        'police'
+        'police',
+        'morning'
     ];
 
     public function createBoard(int $team_id, string $board_name)
@@ -39,6 +41,14 @@ class BoardLogic
         ]);
 
         return $createdBoard;
+    }
+
+    public function getColumns(int $board_id){
+        $board = Board::find($board_id);
+        if($board == null)
+            return null;
+        $columns = $board->columns()->orderBy('previous_id')->get();
+        return $columns;
     }
 
 }

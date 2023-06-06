@@ -8,8 +8,9 @@
 @endsection
 
 @section('app-side')
-    <div class="flex flex-col gap-4 px-4">
-        <a class="w-full p-2 border-2 border-gray-200 cursor-pointer select-none rounded-xl" href="{{ route('viewTeam', ['team_id' => $team->id]) }}">
+    <div class="flex flex-col gap-6 px-8 pl-4 mt-2">
+        <a class="w-full p-2 border-2 border-gray-200 cursor-pointer select-none rounded-xl"
+            href="{{ route('viewTeam', ['team_id' => $team->id]) }}">
             <div class="flex items-center w-full gap-2">
                 <div class="w-16 h-16">
                     <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
@@ -24,34 +25,37 @@
             </div>
         </a>
 
-        <section class="flex flex-col w-full gap-4 ">
+        <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
             @if (Auth::user()->id == $owner->id)
-                <x-form.button outline type="button" action="ModalView.show('updateTeam')"
-                    class="!border-2 !text-sm h-min !px-4">
+                <div data-role="menu-item" onclick="ModalView.show('updateTeam')"
+                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
                     <x-fas-pen class="w-4 h-4" />
-                    Edit
-                </x-form.button>
-                <x-form.button outline type="button" action="ModalView.show('manageMember')"
-                    class="!border-2 !text-sm h-min !px-4">
-                    <x-fas-users class="w-4 h-4" />
-                    Members
-                </x-form.button>
-                <x-form.button outline type="button" action="ModalView.show('inviteMember')"
-                    class="!border-2 !text-sm h-min !px-4">
+                    <p> Edit </p>
+                </div>
+                <hr class="w-full border">
+                <div data-role="menu-item" onclick="ModalView.show('manageMember')"
+                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
+                    <x-fas-user-gear class="w-4 h-4" />
+                    <p>Members</p>
+                </div>
+                <hr class="w-full border">
+                <div data-role="menu-item" onclick="ModalView.show('inviteMember')"
+                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
                     <x-fas-user-plus class="w-4 h-4" />
-                    Invite
-                </x-form.button>
-                <x-form.button outline type="button" action="ModalView.show('createBoard')"
-                    class="!border-2 !text-sm h-min !px-4">
-                    <x-fas-user-plus class="w-4 h-4" />
-                    Add Board
-                </x-form.button>
+                    <p>Invite</p>
+                </div>
+                <hr class="w-full border">
+                <div data-role="menu-item" onclick="ModalView.show('createBoard')"
+                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
+                    <x-fas-table-columns class="w-4 h-4" />
+                    <p>Add Board</p>
+                </div>
             @else
-                <x-form.button outline type="button" action="ModalView.show('updateTeam')"
-                    class="!border-2 !text-sm h-min !px-4">
+                <div data-role="menu-item" onclick="ModalView.show('updateTeam')"
+                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
                     <x-fas-right-from-bracket class="w-4 h-4" />
-                    Leave Team
-                </x-form.button>
+                    <p> Leave Team </p>
+                </div>
             @endif
         </section>
 

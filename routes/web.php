@@ -31,6 +31,7 @@ Route::middleware(["auth", "auth.session"])->post("team/update/picture", [TeamCo
 
 Route::middleware(["auth", "auth.session"])->post("board", [BoardController::class, "createBoard"])->name("createBoard");
 Route::middleware(["auth", "auth.session"])->get("board/{board_id}", [BoardController::class, "showBoard"])->name("board");
+Route::middleware(["auth", "auth.session"])->post("board/{board_id}", [BoardController::class, "updateBoard"])->name("updateBoard");
 
 Route::middleware(["auth", "auth.session"])->get("user/setting", [UserController::class, "showSetting"])->name("setting");
 Route::middleware(["auth", "auth.session"])->get("user/logout", [UserController::class, "logout"])->name("doLogout");
