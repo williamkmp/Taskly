@@ -26,6 +26,12 @@ class Column extends Model
         return $this->belongsTo(Board::class);
     }
 
+    public function cards()
+    {
+        return $this->hasMany(Card::class)
+            ->orderBy("previous_id");
+    }
+
     public function previousColumn()
     {
         return $this->belongsTo(Column::class, 'previous_id');
