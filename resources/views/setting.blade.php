@@ -1,5 +1,9 @@
 @extends('layout.page')
 
+@section('app-header')
+    <h1 class="text-xl font-bold">Setting</h1>
+@endsection
+
 @section('content')
     <template is-modal="changeProfile">
         <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4 flex-grow-1">

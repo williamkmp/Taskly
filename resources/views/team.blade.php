@@ -1,5 +1,63 @@
 @extends('layout.page')
 
+@section('app-header')
+    <div class="flex items-center gap-2">
+        <h1 class="text-xl font-bold">Team:</h1>
+        <p class="text-xl">{{ $team->name }}</p>
+    </div>
+@endsection
+
+@section('app-side')
+    <div class="flex flex-col gap-4 px-4">
+        <a class="w-full p-2 border-2 border-gray-200 cursor-pointer select-none rounded-xl" href="{{ route('viewTeam', ['team_id' => $team->id]) }}">
+            <div class="flex items-center w-full gap-2">
+                <div class="w-16 h-16">
+                    <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
+                        class="!w-16 !h-16 !aspect-square !text-xl" />
+                </div>
+                <article class="flex flex-col gap-2 text-sm">
+                    <h2 class="font-bold">{{ $team->name }}</h2>
+                    <p class="text-sm line-clamp-3">
+                        {{ $team->description }}
+                    </p>
+                </article>
+            </div>
+        </a>
+
+        <section class="flex flex-col w-full gap-4 ">
+            @if (Auth::user()->id == $owner->id)
+                <x-form.button outline type="button" action="ModalView.show('updateTeam')"
+                    class="!border-2 !text-sm h-min !px-4">
+                    <x-fas-pen class="w-4 h-4" />
+                    Edit
+                </x-form.button>
+                <x-form.button outline type="button" action="ModalView.show('manageMember')"
+                    class="!border-2 !text-sm h-min !px-4">
+                    <x-fas-users class="w-4 h-4" />
+                    Members
+                </x-form.button>
+                <x-form.button outline type="button" action="ModalView.show('inviteMember')"
+                    class="!border-2 !text-sm h-min !px-4">
+                    <x-fas-user-plus class="w-4 h-4" />
+                    Invite
+                </x-form.button>
+                <x-form.button outline type="button" action="ModalView.show('createBoard')"
+                    class="!border-2 !text-sm h-min !px-4">
+                    <x-fas-user-plus class="w-4 h-4" />
+                    Add Board
+                </x-form.button>
+            @else
+                <x-form.button outline type="button" action="ModalView.show('updateTeam')"
+                    class="!border-2 !text-sm h-min !px-4">
+                    <x-fas-right-from-bracket class="w-4 h-4" />
+                    Leave Team
+                </x-form.button>
+            @endif
+        </section>
+
+    </div>
+@endsection
+
 @section('content')
     @if (Auth::user()->id == $owner->id)
         <template is-modal="changeProfile">
@@ -66,7 +124,7 @@
                         </div>
                     </section>
 
-                    <x-form.button primary type="button" id="save-btn">Save</x-form.button>
+                    <x-form.button primary type="button" id="save-btn">Delete</x-form.button>
                 </div>
             </div>
         </template>
@@ -111,74 +169,29 @@
     @endif
 
     <div class="flex flex-col w-full h-full overflow-auto">
-        <header class="w-full h-24  bg-pattern-{{ $team->pattern }} border-b border-gray-200">
+        <header class="w-full h-24 flex items-center p-6 bg-pattern-{{ $team->pattern }} border-b border-gray-200">
+            <div class="w-20 h-20">
+                @if (Auth::user()->id == $owner->id)
+                    <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
+                        class="!w-20 !aspect-square !text-4xl" action="ModalView.show('changeProfile')">
+                        <div
+                            class="flex flex-wrap items-center justify-center w-full h-full transition-all bg-black opacity-0 hover:opacity-70">
+                            <x-fas-camera class="w-1/3 m-auto h-1/3" />
+                        </div>
+                    </x-avatar>
+                @else
+                    <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
+                        class="!w-20 !aspect-square !text-4xl" />
+                @endif
+            </div>
         </header>
 
         <div class="flex flex-grow gap-8 px-6 py-4 overflow-hidden">
             {{-- page left section --}}
             <section class="flex flex-col flex-grow h-full gap-6">
-                <header class="flex items-center w-full gap-6">
-
-                    @if (Auth::user()->id == $owner->id)
-                        <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
-                            class="!w-20 !aspect-square !text-4xl" action="ModalView.show('changeProfile')">
-                            <div
-                                class="flex flex-wrap items-center justify-center w-full h-full transition-all bg-black opacity-0 hover:opacity-70">
-                                <x-fas-camera class="w-1/3 m-auto h-1/3" />
-                            </div>
-                        </x-avatar>
-                    @else
-                        <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
-                            class="!w-20 !aspect-square !text-4xl" />
-                    @endif
-
-                    {{-- team informations --}}
-                    <article class="flex flex-col flex-grow gap-2 text-sm">
-                        <h2 class="text-xl font-bold">{{ $team->name }}</h2>
-                        <p class="line-clamp-3">
-                            {{ $team->description }}
-                        </p>
-                        <p>
-                            <span class="font-bold">Created: </span> {{ $team->created_at }}
-                        </p>
-                    </article>
-
-                    {{-- team controls --}}
-                    <div class="flex flex-col justify-end w-40 h-full gap-2">
-                        @if (Auth::user()->id == $owner->id)
-                            <x-form.button outline type="button" action="ModalView.show('updateTeam')"
-                                class="!border-2 !text-sm h-min !px-4">
-                                <x-fas-gear class="w-4 h-4" />
-                                Settings
-                            </x-form.button>
-                            <x-form.button outline type="button" action="ModalView.show('manageMember')"
-                                class="!border-2 !text-sm h-min !px-4">
-                                <x-fas-users class="w-4 h-4" />
-                                Members
-                            </x-form.button>
-                            <x-form.button outline type="button" action="ModalView.show('inviteMember')"
-                                class="!border-2 !text-sm h-min !px-4">
-                                <x-fas-user-plus class="w-4 h-4" />
-                                Invite
-                            </x-form.button>
-                        @else
-                            <x-form.button outline type="button" action="ModalView.show('updateTeam')"
-                                class="!border-2 !text-sm h-min !px-4">
-                                <x-fas-right-from-bracket class="w-4 h-4" />
-                                Leave Team
-                            </x-form.button>
-                        @endif
-                    </div>
-                </header>
-
-                <hr />
 
                 <section class="flex flex-col gap-4">
                     <header class="flex items-center gap-2 pl-1">
-                        <x-form.button type="button" outline class="w-min !border-2 !p-2"
-                            action="ModalView.show('createBoard')">
-                            <x-fas-plus class="w-4 h-4" />
-                        </x-form.button>
                         <h2 class="text-3xl font-bold">Boards</h2>
                     </header>
 
@@ -198,7 +211,7 @@
 
                     <div class="flex flex-wrap mt-2 gap-x-8 gap-y-6">
 
-                        @if ($boards->isEmpty())
+                        @if ($boards->isEmpty() && Auth::user()->id == $owner->id)
                             <div onclick="ModalView.show('createBoard')"
                                 class="flex flex-col items-center justify-center gap-2 text-gray-400 transition duration-300 bg-gray-100 shadow-md cursor-pointer select-none w-72 h-52 rounded-xl hover:shadow-2xl">
                                 <x-fas-plus class="w-8 h-8" />
@@ -208,11 +221,10 @@
 
 
                         @foreach ($boards as $board)
-                            <a href="{{ route('viewTeam', ['team_id' => $board->id]) }}"
-                                class="flex cursor-pointer select-none flex-col transition duration-300 border border-gray-200 shadow-xl rounded-xl h-32 w-72 hover:shadow-2xl bg-pattern-{{ $board->pattern }} overflow-hidden">
+                            <a href="{{ route('board', ['board_id' => $board->id]) }}"
+                                class="flex cursor-pointer select-none flex-col transition duration-300 border border-gray-200 shadow-xl rounded-xl h-32 w-72 hover:shadow-2xl bg-grad-{{ $board->pattern }} overflow-hidden">
                                 <div class="flex-grow w-full p-4">
-                                    <x-avatar name="{{ $board->name }}" asset="{{ $board->image_path }}"
-                                        class="h-12" />
+
                                 </div>
                                 <article class="flex flex-col w-full gap-1 px-4 py-2 bg-white border-t border-t-gray-200">
                                     <h3 class="overflow-hidden font-semibold truncate text-bold">{{ $board->name }}</h3>
@@ -320,7 +332,7 @@
                         let name = card.dataset.name.toLowerCase();
                         let email = card.dataset.email.toLowerCase();
                         card.style.display = "flex";
-                        if (!name.includes(search) && !name.includes(search))
+                        if (!name.includes(search) && !email.includes(search))
                             card.style.display = "none";
                     });
                 });

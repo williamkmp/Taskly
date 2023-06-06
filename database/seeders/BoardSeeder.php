@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Logic\BoardLogic;
 use App\Models\Board;
 use App\Models\Team;
 use App\Models\TeamBoard;
@@ -16,14 +17,13 @@ class BoardSeeder extends Seeder
     public function run(): void
     {
         $boardList = ["Development", "Testing", "Design"];
-
         $teams = Team::all();
         foreach($teams as $team){
             foreach($boardList as $board_name){
                 $board = Board::create([
                     "team_id" => $team->id,
                     "name" => $board_name,
-                    "pattern" => $team->pattern,
+                    "pattern" => BoardLogic::PATTERN[array_rand(BoardLogic::PATTERN)],
                 ]);
             }
         }

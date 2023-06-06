@@ -1,5 +1,10 @@
 @extends('layout.page')
 
+@section('app-header')
+    <h1 class="text-xl font-bold">Teams</h1>
+@endsection
+
+
 @section('content')
     <template is-modal="createTeam">
         <div class="flex flex-col w-full gap-4 p-4">

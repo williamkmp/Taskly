@@ -92,8 +92,8 @@ class TeamController extends Controller
         $team_id = intval($team_id);
         $user_id = Auth::user()->id;
 
-        if(!$this->teamLogic->userHasAccsess($user_id, $team_id)){
-            return redirect()->back()->with('notif',["You don't have access for that team, please try again or cantact the owner."]);
+        if (!$this->teamLogic->userHasAccsess($user_id, $team_id)) {
+            return redirect()->back()->with('notif', ["You don't have access for that team, please try again or cantact the owner."]);
         }
 
         $selected_team = Team::find($team_id);
@@ -136,8 +136,8 @@ class TeamController extends Controller
         $team_id = intval($request->team_id);
         $user_id = Auth::user()->id;
 
-        if(!$this->teamLogic->userHasAccsess($user_id, $team_id)){
-            return redirect()->route("home")->with('notif',["You don't have access for that team, please try again or cantact the owner."]);
+        if (!$this->teamLogic->userHasAccsess($user_id, $team_id)) {
+            return redirect()->route("home")->with('notif', ["You don't have access for that team, please try again or cantact the owner."]);
         }
 
         if ($validator->fails()) {
@@ -242,6 +242,10 @@ class TeamController extends Controller
     {
         $emails = $request->emails;
         $team_id = intval($request->team_id);
+
+        if ($emails == null)
+            return redirect()->back();
+
 
         foreach ($emails as $email) {
             $user = User::where("email", $email)->first();
