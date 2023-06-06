@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Logic\BoardLogic;
 use App\Models\Board;
+use App\Models\Column;
 use App\Models\Team;
 use App\Models\TeamBoard;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -17,16 +18,36 @@ class BoardSeeder extends Seeder
     public function run(): void
     {
         $boardList = ["Development", "Testing", "Design"];
-        $teams = Team::all();
-        foreach($teams as $team){
-            foreach($boardList as $board_name){
-                $board = Board::create([
-                    "team_id" => $team->id,
-                    "name" => $board_name,
-                    "pattern" => BoardLogic::PATTERN[array_rand(BoardLogic::PATTERN)],
-                ]);
-            }
-        }
 
+        $team = Team::where("name", "Taskly")->first();
+        $board =  Board::create([
+            "team_id" => $team->id,
+            "name" => "Developemnt",
+            "pattern" => BoardLogic::PATTERN[array_rand(BoardLogic::PATTERN)],
+        ]);
+
+        $col1 = Column::create([
+            "name" => "To-Do",
+            "board_id" => $board->id,
+            "previous_id" => null,
+            "next_id" => null,
+        ]);
+
+        $col2 = Column::create([
+            "name" => "Development",
+            "board_id" => $board->id,
+            "previous_id" => $col1->id,
+            "next_id" => null,
+        ]);
+
+        $col3 = Column::create([
+            "name" => "Development",
+            "board_id" => $board->id,
+            "previous_id" => $col2->id,
+            "next_id" => null,
+        ]);
+
+        $col2->next_id = $col3->id;
+        $col2->save();
     }
 }
