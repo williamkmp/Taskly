@@ -30,6 +30,8 @@ class Column extends Model
         'board_id',
         'previous_id',
         'next_id',
+        'created_at',
+        'updated_at',
     ];
 
     public function board()

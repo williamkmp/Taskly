@@ -30,6 +30,8 @@ class Card extends Model
     protected $hidden = [
         'previous_id',
         'next_id',
+        'created_at',
+        'updated_at',
     ];
 
     public function board()
