@@ -41,16 +41,14 @@ class BoardController extends Controller
     public function showBoard($board_id)
     {
         $board_id = intval($board_id);
-        $board = Board::find($board_id);
+        $board = $this->boardLogic->getData($board_id);
         $team = Team::find($board->team_id);
         $teamOwner = $this->teamLogic->getTeamOwner($board->team_id);
-        $columns = $this->boardLogic->getColumns($board->id);
 
         return view("board")
             ->with("team", $team)
             ->with("owner", $teamOwner)
             ->with("board", $board)
-            ->with("columns", $columns)
             ->with("patterns", BoardLogic::PATTERN);
     }
 
@@ -68,5 +66,11 @@ class BoardController extends Controller
         $board->save();
 
         return redirect()->back()->with("notif", ["Success\nBoard is successfully updated!"]);
+    }
+
+    public function getData($board_id)
+    {
+        $boardData = $this->boardLogic->getData(intval($board_id));
+        return response()->json($boardData);
     }
 }

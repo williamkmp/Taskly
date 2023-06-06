@@ -47,8 +47,14 @@ class BoardLogic
         $board = Board::find($board_id);
         if($board == null)
             return null;
-        $columns = $board->columns()->orderBy('previous_id')->get();
+        $columns = $board->columns()->get();
         return $columns;
+    }
+
+    public function getData(int $board_id)
+    {
+        $board = Board::with("columns.cards")->where("id", $board_id)->first();
+        return $board;
     }
 
 }

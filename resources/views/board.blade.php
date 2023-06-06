@@ -45,9 +45,6 @@
     <div class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
         <section class="flex h-full min-w-full gap-4 p-4">
             <div class="flex h-full gap-4" id="column-container">
-                @foreach ($columns as $column)
-                    <x-column id="{{ $column->id }}" name="{{ $column->name }}"></x-column>
-                @endforeach
             </div>
             <div onclick="ModalView.show('addCol')"
                 class="flex flex-col gap-2 flex-shrink-0 h-min shadow-lg w-[22rem] rounded-xl py-2 px-4 bg-slate-50 hover:scale-105 hover:relative transition select-none cursor-pointer">

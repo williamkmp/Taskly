@@ -30,6 +30,7 @@ Route::middleware(["auth", "auth.session"])->post("team/update/profile", [TeamCo
 Route::middleware(["auth", "auth.session"])->post("team/update/picture", [TeamController::class, "updateImage"])->name("doChangeTeamImage");
 
 Route::middleware(["auth", "auth.session"])->post("board", [BoardController::class, "createBoard"])->name("createBoard");
+Route::middleware(["auth", "auth.session"])->get("board/{board_id}/data", [BoardController::class, "getData"])->name("boardJson");
 Route::middleware(["auth", "auth.session"])->get("board/{board_id}", [BoardController::class, "showBoard"])->name("board");
 Route::middleware(["auth", "auth.session"])->post("board/{board_id}", [BoardController::class, "updateBoard"])->name("updateBoard");
 
