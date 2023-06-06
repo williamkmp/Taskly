@@ -21,6 +21,17 @@ class Column extends Model
         'next_id',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'board_id',
+        'previous_id',
+        'next_id',
+    ];
+
     public function board()
     {
         return $this->belongsTo(Board::class);
