@@ -32,30 +32,33 @@ class BoardSeeder extends Seeder
             "board_id" => $board->id,
         ]);
 
-        $col3 = Column::create([
-            "name" => "Testing",
-            "board_id" => $board->id,
-        ]);
-
         $col2 = Column::create([
             "name" => "Development",
             "board_id" => $board->id,
         ]);
 
-        $card1 = Card::create([
-            "name" => "Perancangan halaman Login",
-            "column_id" => $col1->id,
+        $col3 = Column::create([
+            "name" => "Testing",
+            "board_id" => $board->id,
         ]);
 
-        $card3 = Card::create([
-            "name" => "Desain halaman registrasi",
+
+        $card1 = Card::create([
+            "name" => "Card 1",
             "column_id" => $col1->id,
         ]);
 
         $card2 = Card::create([
-            "name" => "Pembuatan backend auth pengguna",
+            "name" => "Card 2",
             "column_id" => $col1->id,
         ]);
+
+        $card3 = Card::create([
+            "name" => "Card 3",
+            "column_id" => $col1->id,
+        ]);
+
+
 
 
         $col1->next_id = $col2->id;
