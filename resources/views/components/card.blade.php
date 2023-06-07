@@ -39,8 +39,8 @@
                     ServerRequest.post(`{{ url('/') }}/board/${board_id}/card/reorder`, {
                             column_id: this.ref.closest("div[data-role='column']").dataset.id,
                             middle_id: this.ref.dataset.id,
-                            bottom_id: this.ref.nextSibling ? this.ref.nextSibling.dataset.id :
-                                null
+                            bottom_id: (this.ref.nextElementSibling) ? this.ref.nextElementSibling.dataset.id : null,
+                            top_id: (this.ref.previousElementSibling) ? this.ref.previousElementSibling.dataset.id : null,
                         })
                         .then((response) => {
                             this.column.board.IS_EDITING = false;

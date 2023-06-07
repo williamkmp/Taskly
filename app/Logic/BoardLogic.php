@@ -134,7 +134,7 @@ class BoardLogic
         return $board;
     }
 
-    public function moveCard(int $target_card_id, int $column_id, int $bottom_card_id)
+    public function moveCard(int $target_card_id, int $column_id, int $bottom_card_id, int $top_card_id)
     {
         $column = Column::find($column_id);
         $target_card = Card::find($target_card_id);
@@ -144,10 +144,11 @@ class BoardLogic
         $bottom_card = null;
 
         if($column == null) return null;
-        if($bottom_card_id != null) $bottom_card = Card::find($bottom_card_id);
+        if($bottom_card_id != 0) $bottom_card = Card::find($bottom_card_id);
         if($bottom_card != null) $top_card = Card::find($bottom_card->previous_id);
         if($target_card->previous_id) $previous_top_card = Card::find($target_card->previous_id);
         if($target_card->next_id) $previous_bottom_card = Card::find($target_card->next_id);
+        if($bottom_card == null && $top_card == null) $top_card = Card::find($top_card_id);
 
         //insert in middle
         $target_card->column_id = $column->id;

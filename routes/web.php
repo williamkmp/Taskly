@@ -15,7 +15,6 @@ Route::middleware("guest")->post("auth/login", [AuthController::class, "doLogin"
 Route::middleware("guest")->get("auth/register", [AuthController::class, "showRegister"])->name("register");
 Route::middleware("guest")->post("auth/register", [AuthController::class, "doRegister"])->name("doRegister");
 
-
 Route::middleware(["auth", "auth.session"])->get("team", [TeamController::class, "showTeams"])->name("home");
 Route::middleware(["auth", "auth.session"])->post("team", [TeamController::class, "createTeam"])->name("doCreateTeam");
 Route::middleware(["auth", "auth.session"])->get("team/search", [TeamController::class, "search"])->name("searchTeam");
@@ -35,6 +34,7 @@ Route::middleware(["auth", "auth.session"])->get("board/{board_id}/data", [Board
 Route::middleware(["auth", "auth.session"])->get("board/{board_id}", [BoardController::class, "showBoard"])->name("board");
 Route::middleware(["auth", "auth.session"])->post("board/{board_id}", [BoardController::class, "updateBoard"])->name("updateBoard");
 Route::middleware(["auth", "auth.session"])->post("board/{board_id}/column/{column_id}/card", [BoardController::class, "addCard"])->name("addCard");
+Route::middleware(["auth", "auth.session"])->post("board/{board_id}/column/reorder", [BoardController::class, "reorderCol"])->name("reorderCol");
 Route::middleware(["auth", "auth.session"])->post("board/{board_id}/card/reorder", [BoardController::class, "reorderCard"])->name("reorderCard");
 
 Route::middleware(["auth", "auth.session"])->get("user/setting", [UserController::class, "showSetting"])->name("setting");

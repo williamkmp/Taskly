@@ -117,12 +117,13 @@ class BoardController extends Controller
         $column_id = intval($request->column_id);
         $middle_id = intval($request->middle_id);
         $bottom_id = intval($request->bottom_id);
+        $top_id = intval($request->top_id);
 
         if(!$this->boardLogic->hasAccess($user_id, $board_id)){
             return response()->json(["url" => route("home")], HttpResponse::HTTP_BAD_REQUEST);
         }
 
-        $updatedCard = $this->boardLogic->moveCard($middle_id, $column_id, $bottom_id);
+        $updatedCard = $this->boardLogic->moveCard($middle_id, $column_id, $bottom_id, $top_id);
 
         return response()->json($updatedCard);
     }
