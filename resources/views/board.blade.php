@@ -116,10 +116,9 @@
                         column.cards,
                     )
                 }
-
-                // setInterval(() => {
-                //     this.refresh();
-                // }, 2000);
+                setInterval(() => {
+                    this.refresh();
+                }, 2000);
             }
 
             addCol(id, name, cards) {
