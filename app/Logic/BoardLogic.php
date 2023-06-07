@@ -133,4 +133,35 @@ class BoardLogic
         $board->setHidden(["team_id", "image_path", "created_at", "updated_at", "pattern"]);
         return $board;
     }
+
+    public function moveCard(int $target_card_id, int $column_id, int $bottom_card_id)
+    {
+        $top_card = null;
+        $bottom_card = Card::find($bottom_card_id);
+        $target_card = Card::find($target_card_id);
+        $column = Column::find($column_id);
+        if($column == null) return null;
+
+        if($bottom_card != null){
+           $top_card = $bottom_card->previousCard;
+        }
+
+        //insert in middle
+        $target_card->column_id = $column->id;
+        $target_card->previous_id = null;
+        $target_card->next_id = null;
+        if($bottom_card){
+            $target_card->next_id = $bottom_card->id;
+            $bottom_card->previous_id = $target_card->id;
+        }
+        if($top_card){
+            $target_card->previous_id = $top_card->id;
+            $top_card->next_id = $target_card->id;
+        }
+
+        $target_card->save();
+        if($bottom_card) $bottom_card->save();
+        if($top_card) $top_card->save();
+        return $target_card;
+    }
 }

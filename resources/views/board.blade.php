@@ -103,14 +103,12 @@
 
 @pushOnce('page')
     <script>
-        const isEditing = false;
-        const boardJson = @json($board);
-        console.log(boardJson);
-
         class Board {
             constructor(boardJson) {
                 this.id = boardJson.id;
+                this.IS_EDITING = false;
                 this.ref = DOM.find("#column-container");
+                this.columnList = [];
                 for (const column of boardJson.columns) {
                     this.addCol(
                         column.id,
@@ -118,32 +116,64 @@
                         column.cards,
                     )
                 }
+
+                setInterval(() => {
+                    this.refresh();
+                }, 2000);
             }
 
             addCol(id, name, cards) {
                 let column = new Column(id, name, cards);
+                this.columnList.push(column);
                 column.mountTo(this);
+            }
+
+            refresh() {
+                if (this.IS_EDITING) return;
+                ServerRequest.get(`{{ route('boardJson', ['board_id' => $board->id]) }}`)
+                    .then(response => {
+                        if (this.IS_EDITING) return;
+                        this.columnList = [];
+                        const json = response.data;
+                        this.ref.innerHTML = "";
+                        for (const column of json.columns) {
+                            this.addCol(
+                                column.id,
+                                column.name,
+                                column.cards,
+                            )
+                        }
+                        console.log("[BOARD]: refreshed...");
+                    });
             }
         }
 
-        const board = new Board(boardJson);
+        const board = new Board(@json($board));
 
         ModalView.onShow("addCol", (modal) => {
             modal.querySelector("#input-text-column_name").focus();
-            modal.querySelector("form").addEventListener("submit", async (e) => {
+            modal.querySelector("form").addEventListener("submit", (e) => {
+                isEditing = true;
                 e.preventDefault();
                 const colName = modal.querySelector("#input-text-column_name").value.trim();
-                let response = await ServerRequest.post(`{{ route('addCol', ['board_id' => $board->id]) }}`, {
-                    board_id: `{{ $board->id }}`,
-                    column_name: colName
-                });
-                const newCol = response.data;
-                board.addCol(newCol.id, newCol.name);
+                if (colName === "") {
+                    ModalView.close();
+                    isEditing = false;
+                    return;
+                }
+
+                const column = new Column(null, colName);
+                column.mountTo(board);
                 ModalView.close();
+                ServerRequest.post(
+                    `{{ route('addCol', ['board_id' => $board->id]) }}`, {
+                        board_id: `{{ $board->id }}`,
+                        column_name: colName
+                    }).then(response => {
+                    column.setId(response.data.id);
+                });
             });
         });
-
-
 
         @if ($errors->any())
             ToastView.notif("Warning", "{{ $errors->first() }}");
