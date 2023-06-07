@@ -41,10 +41,11 @@
 
 
 @section('content')
+    <x-card />
     <x-column />
     <div class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
         <section class="flex h-full min-w-full gap-4 p-4">
-            <div class="flex h-full gap-4" id="column-container">
+            <div class="flex h-full gap-4" id="column-container" data-id="{{ $board->id }}">
             </div>
             <div onclick="ModalView.show('addCol')"
                 class="flex flex-col gap-2 flex-shrink-0 h-min shadow-lg w-[22rem] rounded-xl py-2 px-4 bg-slate-50 hover:scale-105 hover:relative transition select-none cursor-pointer">
@@ -102,24 +103,47 @@
 
 @pushOnce('page')
     <script>
-        const columnContainer = DOM.find("#column-container");
+        const isEditing = false;
+        const boardJson = @json($board);
+        console.log(boardJson);
+
         class Board {
-            constructor(id) {
-                this.id = id;
-                this.ref = boardRef;
+            constructor(boardJson) {
+                this.id = boardJson.id;
+                this.ref = DOM.find("#column-container");
+                for (const column of boardJson.columns) {
+                    this.addCol(
+                        column.id,
+                        column.name,
+                        column.cards,
+                    )
+                }
+            }
+
+            addCol(id, name, cards) {
+                let column = new Column(id, name, cards);
+                column.mountTo(this);
             }
         }
 
-        const board = new Board({{ $board->id }});
+        const board = new Board(boardJson);
 
         ModalView.onShow("addCol", (modal) => {
             modal.querySelector("#input-text-column_name").focus();
-            modal.querySelector("form").addEventListener("submit", (e) => {
+            modal.querySelector("form").addEventListener("submit", async (e) => {
                 e.preventDefault();
-                const value = modal.querySelector("#input-text-column_name").value.trim();
+                const colName = modal.querySelector("#input-text-column_name").value.trim();
+                let response = await ServerRequest.post(`{{ route('addCol', ['board_id' => $board->id]) }}`, {
+                    board_id: `{{ $board->id }}`,
+                    column_name: colName
+                });
+                const newCol = response.data;
+                board.addCol(newCol.id, newCol.name);
                 ModalView.close();
             });
         });
+
+
 
         @if ($errors->any())
             ToastView.notif("Warning", "{{ $errors->first() }}");

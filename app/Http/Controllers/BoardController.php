@@ -6,8 +6,8 @@ use App\Logic\BoardLogic;
 use App\Logic\TeamLogic;
 use App\Models\Board;
 use App\Models\Team;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Auth;
 
 class BoardController extends Controller
@@ -38,6 +38,27 @@ class BoardController extends Controller
         return redirect()->back()->with("notif", ["Success\nBoard created successfully!"]);
     }
 
+    public function addColumn(Request $request, $team_id)
+    {
+        $request->validate([
+            "board_id" => "required",
+            "column_name" => "required",
+        ]);
+        $user_id = Auth::user()->id;
+        $team_id = intval($team_id);
+        $board_id = intval($request->board_id);
+
+        if (!$this->teamLogic->userHasAccsess($user_id, $team_id))
+            return redirect()->route("home")->with('notif', ["You don't have access for that team, please try again or cantact the owner."]);
+
+        $createdColumn = $this->boardLogic->addColumn($board_id, $request->column_name);
+
+        if ($createdColumn == null)
+            return redirect()->back()->with("notif", ["Error\nFail to create board, please try again"]);
+
+        return response()->json($createdColumn);
+    }
+
     public function showBoard($board_id)
     {
         $board_id = intval($board_id);
@@ -66,6 +87,21 @@ class BoardController extends Controller
         $board->save();
 
         return redirect()->back()->with("notif", ["Success\nBoard is successfully updated!"]);
+    }
+
+    public function addCard(Request $request, $board_id, $column_id)
+    {
+        $board_id = intval($board_id);
+        $user_id = Auth::user()->id;
+        $column_id = intval($column_id);
+        $card_name = $request->name;
+
+        if(!$this->boardLogic->hasAccess($user_id, $board_id)){
+            return response()->json(["url" => route("home")], HttpResponse::HTTP_BAD_REQUEST);
+        }
+
+        $newCard = $this->boardLogic->addCard($column_id, $card_name);
+        return response()->json($newCard);
     }
 
     public function getData($board_id)
