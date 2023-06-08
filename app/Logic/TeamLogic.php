@@ -35,16 +35,16 @@ class TeamLogic
      * @param int $user_id owner id
      * @param string $team_name team name
      * @param string $team_description team description
+     * @param string $team_pattern team pattern
      *
      * @return Team created team
      */
-    function createTeam(int $user_id, string $team_name, string $team_description)
+    function createTeam(int $user_id, string $team_name, string $team_description, string $team_pattern)
     {
-        $selected_pattern = TeamLogic::PATTERN[array_rand(TeamLogic::PATTERN)];
         $newTeam = Team::create([
             "name" => $team_name,
             "description" => $team_description,
-            "pattern" => $selected_pattern
+            "pattern" => $team_pattern
         ]);
 
         UserTeam::create([

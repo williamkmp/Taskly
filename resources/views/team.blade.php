@@ -9,7 +9,7 @@
 
 @section('app-side')
     <div class="flex flex-col gap-6 px-8 pl-4 mt-2">
-        <a class="w-full p-2 border-2 border-gray-200 cursor-pointer select-none rounded-xl"
+        <a class="w-full p-2 overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl"
             href="{{ route('viewTeam', ['team_id' => $team->id]) }}">
             <div class="flex items-center w-full gap-2">
                 <div class="w-16 h-16">
@@ -17,7 +17,7 @@
                         class="!w-16 !h-16 !aspect-square !text-xl" />
                 </div>
                 <article class="flex flex-col gap-2 text-sm">
-                    <h2 class="font-bold">{{ $team->name }}</h2>
+                    <h2 class="max-w-full overflow-hidden font-bold truncate">{{ $team->name }}</h2>
                     <p class="text-sm line-clamp-3">
                         {{ $team->description }}
                     </p>
@@ -83,6 +83,24 @@
                     <x-form.text name="team_name" label="Team's Name" value="{{ $team->name }}" required />
                     <x-form.textarea name="team_description" label="Team's Description" value="{{ $team->description }}"
                         required />
+                    <div class="flex flex-col w-full gap-2" x-data="{ selected: '{{ $team->pattern }}' }">
+                        <label class="pl-6">Team's Background</label>
+                        <input type="hidden" id="pattern-field" name="team_pattern" x-bind:value="selected">
+                        <div
+                            class="flex items-center justify-start w-full max-w-2xl gap-2 px-4 py-2 overflow-hidden overflow-x-scroll border-2 border-gray-200 h-36 rounded-xl">
+                            @foreach ($patterns as $pattern)
+                                <div x-on:click="selected = '{{ $pattern }}'"
+                                    x-bind:class="(selected == '{{ $pattern }}') ? 'border-black' : 'border-gray-200'"
+                                    class="{{ $pattern == $team->pattern ? 'order-first' : '' }} h-full flex-shrink-0 border-4 rounded-lg w-36 bg-pattern-{{ $pattern }} hover:border-black">
+                                    <div x-bind:class="(selected == '{{ $pattern }}') ? 'opacity-100' : 'opacity-0'"
+                                        class="flex items-center justify-center w-full h-full">
+                                        <x-fas-circle-check class="w-6 h-6" />
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
                     <x-form.button class="mt-4" type="submit" primary>Submit</x-form.button>
                 </form>
             </div>
@@ -96,6 +114,23 @@
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
                     <x-form.text name="board_name" label="Board's Name" required />
+                    <div class="flex flex-col w-full gap-2" x-data="{ selected: '{{ $backgrounds[0] }}' }">
+                        <label class="pl-6">Board's Color</label>
+                        <input type="hidden" id="pattern-field" name="board_pattern" x-bind:value="selected">
+                        <div
+                            class="flex items-center justify-start w-full max-w-2xl gap-2 px-4 py-2 overflow-hidden overflow-x-scroll border-2 border-gray-200 h-36 rounded-xl">
+                            @foreach ($backgrounds as $pattern)
+                                <div x-on:click="selected = '{{ $pattern }}'"
+                                    x-bind:class="(selected == '{{ $pattern }}') ? 'border-black' : 'border-gray-200'"
+                                    class="{{ $pattern == $backgrounds[0] ? 'order-first' : '' }} h-full flex-shrink-0 border-4 rounded-lg w-36 bg-grad-{{ $pattern }} hover:border-black">
+                                    <div x-bind:class="(selected == '{{ $pattern }}') ? 'opacity-100' : 'opacity-0'"
+                                        class="flex items-center justify-center w-full h-full">
+                                        <x-fas-circle-check class="w-6 h-6" />
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                     <x-form.button class="mt-4" type="submit" primary>Submit</x-form.button>
                 </form>
             </div>
@@ -120,7 +155,8 @@
                                         class="!flex-shrink-0 !flex-grow-0 w-12" />
                                     <p class="w-full h-8 text-xs font-bold text-center line-clamp-2">{{ $member->name }}
                                     </p>
-                                    <p class="w-full h-8 text-xs font-normal text-center line-clamp-2">{{ $member->email }}
+                                    <p class="w-full h-8 text-xs font-normal text-center line-clamp-2">
+                                        {{ $member->email }}
                                     </p>
                                 </div>
                             @endforeach
@@ -196,7 +232,7 @@
 
                 <section class="flex flex-col gap-4">
                     <header class="flex items-center gap-2 pl-1">
-                        <h2 class="text-3xl font-bold">Boards</h2>
+                        <h2 class="text-2xl font-bold">Boards</h2>
                     </header>
 
                     {{-- Search Bar --}}
@@ -271,6 +307,26 @@
 @pushOnce('page')
     <script>
         @if (Auth::user()->id == $owner->id)
+            ModalView.onShow('createBoard', (modal) => {
+                modal.querySelectorAll("a").forEach(
+                    link => link.addEventListener("click", () => PageLoader.show())
+                );
+
+                modal.querySelectorAll("form[action][method]").forEach(
+                    form => form.addEventListener("submit", () => PageLoader.show())
+                );
+            });
+
+            ModalView.onShow('updateTeam', (modal) => {
+                modal.querySelectorAll("a").forEach(
+                    link => link.addEventListener("click", () => PageLoader.show())
+                );
+
+                modal.querySelectorAll("form[action][method]").forEach(
+                    form => form.addEventListener("submit", () => PageLoader.show())
+                );
+            });
+
             ModalView.onShow("changeProfile", (modal) => {
                 const imageInput = modal.querySelector("#input-file-picture");
                 const btnSubmit = modal.querySelector("#btn-submit");

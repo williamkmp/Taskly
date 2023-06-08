@@ -66,6 +66,24 @@
                 @csrf
                 <x-form.text name="team_name" label="Team's Name" required />
                 <x-form.textarea name="team_description" label="Team's Description" required />
+
+                <div class="flex flex-col w-full gap-2" x-data="{ selected: '{{ $patterns[0] }}' }">
+                    <label class="pl-6">Team's Background</label>
+                    <input type="hidden" id="pattern-field" name="team_pattern" x-bind:value="selected">
+                    <div
+                        class="flex items-center justify-start w-full max-w-2xl gap-2 px-4 py-2 overflow-hidden overflow-x-scroll border-2 border-gray-200 h-36 rounded-xl">
+                        @foreach ($patterns as $pattern)
+                            <div x-on:click="selected = '{{ $pattern }}'"
+                                x-bind:class="(selected == '{{ $pattern }}') ? 'border-black' : 'border-gray-200'"
+                                class="{{ $pattern == $patterns[0] ? 'order-first' : '' }} h-full flex-shrink-0 border-4 rounded-lg w-36 bg-pattern-{{ $pattern }} hover:border-black">
+                                <div x-bind:class="(selected == '{{ $pattern }}') ? 'opacity-100' : 'opacity-0'"
+                                    class="flex items-center justify-center w-full h-full">
+                                    <x-fas-circle-check class="w-6 h-6" />
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
                 <x-form.button class="mt-4" type="submit" primary>Submit</x-form.button>
             </form>
         </div>

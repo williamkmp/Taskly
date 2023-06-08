@@ -23,6 +23,7 @@ class BoardController extends Controller
         $request->validate([
             "team_id" => "required",
             "board_name" => "required",
+            "board_pattern" => "required"
         ]);
         $user_id = Auth::user()->id;
         $team_id = intval($request->team_id);
@@ -30,7 +31,11 @@ class BoardController extends Controller
         if (!$this->teamLogic->userHasAccsess($user_id, $team_id))
             return redirect()->route("home")->with('notif', ["You don't have access for that team, please try again or cantact the owner."]);
 
-        $createdBoard = $this->boardLogic->createBoard($team_id, $request->board_name);
+        $createdBoard = $this->boardLogic->createBoard(
+            $team_id,
+            $request->board_name,
+            $request->board_pattern,
+        );
 
         if ($createdBoard == null)
             return redirect()->back()->with("notif", ["Error\nFail to create board, please try again"]);

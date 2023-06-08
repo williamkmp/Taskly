@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Logic\BoardLogic;
 use App\Logic\FileLogic;
 use App\Logic\TeamLogic;
 use App\Logic\UserLogic;
@@ -25,14 +26,16 @@ class TeamController extends Controller
     public function createTeam(Request $request)
     {
         $request->validate([
-            "team_name" => "required|min:5|max:30",
-            "team_description" => "required|min:5|max:200"
+            "team_name" => "required|min:5|max:20",
+            "team_description" => "required|min:5|max:90",
+            "team_pattern" => 'required',
         ]);
 
         $createdTeam = $this->teamLogic->createTeam(
             Auth::user()->id,
             $request->team_name,
             $request->team_description,
+            $request->team_pattern,
         );
 
         return redirect()->route("viewTeam", ['team_id' => $createdTeam->id]);
@@ -42,8 +45,9 @@ class TeamController extends Controller
     {
         $request->validate([
             "team_id" => "required|integer",
-            "team_name" => "required|min:5|max:30",
-            "team_description" => 'required|min:8|max:200',
+            "team_name" => "required|min:5|max:20",
+            "team_description" => 'required|min:8|max:90',
+            "team_pattern" => 'required',
         ]);
         $team_id = intval($request->team_id);
         $selectedTeam = Team::find($team_id);
@@ -54,6 +58,7 @@ class TeamController extends Controller
 
         $selectedTeam->name = $request->team_name;
         $selectedTeam->description = $request->team_description;
+        $selectedTeam->pattern = $request->team_pattern;
         $selectedTeam->save();
 
         return redirect()->back()->with("notif", ["Success\nEdit succesfully applied!"]);
@@ -84,6 +89,7 @@ class TeamController extends Controller
 
         return view("teams")
             ->with("teams", $teams)
+            ->with("patterns", TeamLogic::PATTERN)
             ->with("invites", $invites);
     }
 
@@ -105,6 +111,8 @@ class TeamController extends Controller
             ->with("team", $selected_team)
             ->with("owner", $team_owner)
             ->with("members", $team_members)
+            ->with("patterns", TeamLogic::PATTERN)
+            ->with("backgrounds", BoardLogic::PATTERN)
             ->with("boards", $team_boards);
     }
 
