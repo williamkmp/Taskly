@@ -32,42 +32,20 @@ class BoardSeeder extends Seeder
             "board_id" => $board->id,
         ]);
 
-        $col2 = Column::create([
-            "name" => "Development",
-            "board_id" => $board->id,
-        ]);
-
-        $col3 = Column::create([
-            "name" => "Testing",
-            "board_id" => $board->id,
-        ]);
-
-
         $card1 = Card::create([
-            "name" => "Card 1",
+            "name" => "Create Login View",
             "column_id" => $col1->id,
         ]);
 
         $card2 = Card::create([
-            "name" => "Card 2",
+            "name" => "Create Registration View",
             "column_id" => $col1->id,
         ]);
 
         $card3 = Card::create([
-            "name" => "Card 3",
+            "name" => "Create Home View",
             "column_id" => $col1->id,
         ]);
-
-
-
-
-        $col1->next_id = $col2->id;
-        $col2->previous_id = $col1->id;
-        $col2->next_id = $col3->id;
-        $col3->previous_id = $col2->id;
-        $col1->save();
-        $col2->save();
-        $col3->save();
 
         $card1->next_id = $card2->id;
         $card2->previous_id = $card1->id;
