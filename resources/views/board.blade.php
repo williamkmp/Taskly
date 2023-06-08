@@ -26,22 +26,28 @@
             </div>
         </a>
 
-        <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
-            @if (Auth::user()->id == $owner->id)
+        @if (Auth::user()->id == $owner->id)
+            <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
                 <div data-role="menu-item" onclick="ModalView.show('updateBoard')"
                     class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
                     <x-fas-pen class="w-4 h-4" />
                     <p> Edit </p>
                 </div>
-            @endif
-        </section>
+                <hr class="w-full border">
+                <div data-role="menu-item" onclick="ModalView.show('deleteTeam')"
+                    class="flex items-center w-full gap-3 px-6 py-2 text-red-600 cursor-pointer select-none hover:bg-black hover:text-white">
+                    <x-fas-trash class="w-4 h-4" />
+                    <p>Delete</p>
+                </div>
+            </section>
+        @endif
 
     </div>
 @endsection
 
 
 @section('content')
-    <x-card teamid="{{ $board->team_id }}"/>
+    <x-card teamid="{{ $board->team_id }}" />
     <x-column teamid="{{ $board->team_id }}" />
     <div id="board-background"
         class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
@@ -60,38 +66,52 @@
     </div>
 
     {{-- modal declaration --}}
-    <template is-modal="updateBoard">
-        <div class="flex flex-col w-full gap-4 p-4">
-            <h1 class="text-3xl font-bold">Edit Board</h1>
-            <hr>
-            <form action="{{ route('updateBoard', ['board_id' => $board->id, 'team_id' => $board->id]) }}" method="POST"
-                class="flex flex-col gap-4">
+    @if (Auth::user()->id == $owner->id)
+        <template is-modal="updateBoard">
+            <div class="flex flex-col w-full gap-4 p-4">
+                <h1 class="text-3xl font-bold">Edit Board</h1>
+                <hr>
+                <form action="{{ route('updateBoard', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}"
+                    method="POST" class="flex flex-col gap-4">
+                    @csrf
+                    <input type="hidden" name="board_id" value="{{ $board->id }}">
+                    <x-form.text name="board_name" label="Board's Name" value="{{ $board->name }}" required />
+
+                    <div class="flex flex-col w-full gap-2" x-data="{ selected: '{{ $board->pattern }}' }">
+                        <label class="pl-6">Board's Color</label>
+                        <input type="hidden" id="pattern-field" name="board_pattern" x-bind:value="selected">
+                        <div
+                            class="flex items-center justify-start w-full max-w-2xl gap-2 px-4 py-2 overflow-hidden overflow-x-scroll border-2 border-gray-200 h-36 rounded-xl">
+                            @foreach ($patterns as $pattern)
+                                <div x-on:click="selected = '{{ $pattern }}'"
+                                    x-bind:class="(selected == '{{ $pattern }}') ? 'border-black' : 'border-gray-200'"
+                                    class="{{ $pattern == $board->pattern ? 'order-first' : '' }} h-full flex-shrink-0 border-4 rounded-lg w-36 bg-grad-{{ $pattern }} hover:border-black">
+                                    <div x-bind:class="(selected == '{{ $pattern }}') ? 'opacity-100' : 'opacity-0'"
+                                        class="flex items-center justify-center w-full h-full">
+                                        <x-fas-circle-check class="w-6 h-6" />
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <x-form.button class="mt-4" type="submit" primary>Save</x-form.button>
+                </form>
+            </div>
+        </template>
+
+        <template is-modal="deleteTeam">
+            <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
+                action="{{ route('deleteBoard', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}">
                 @csrf
                 <input type="hidden" name="board_id" value="{{ $board->id }}">
-                <x-form.text name="board_name" label="Board's Name" value="{{ $board->name }}" required />
-
-                <div class="flex flex-col w-full gap-2" x-data="{ selected: '{{ $board->pattern }}' }">
-                    <label class="pl-6">Board's Color</label>
-                    <input type="hidden" id="pattern-field" name="board_pattern" x-bind:value="selected">
-                    <div
-                        class="flex items-center justify-start w-full max-w-2xl gap-2 px-4 py-2 overflow-hidden overflow-x-scroll border-2 border-gray-200 h-36 rounded-xl">
-                        @foreach ($patterns as $pattern)
-                            <div x-on:click="selected = '{{ $pattern }}'"
-                                x-bind:class="(selected == '{{ $pattern }}') ? 'border-black' : 'border-gray-200'"
-                                class="{{ $pattern == $board->pattern ? 'order-first' : '' }} h-full flex-shrink-0 border-4 rounded-lg w-36 bg-grad-{{ $pattern }} hover:border-black">
-                                <div x-bind:class="(selected == '{{ $pattern }}') ? 'opacity-100' : 'opacity-0'"
-                                    class="flex items-center justify-center w-full h-full">
-                                    <x-fas-circle-check class="w-6 h-6" />
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
+                <p class="mb-6 text-lg text-center"> Are you sure you want to delete this board?</p>
+                <div class="flex gap-6">
+                    <x-form.button type="submit">Yes</x-form.button>
+                    <x-form.button type="button" action="ModalView.close()" primary>No</x-form.button>
                 </div>
-                <x-form.button class="mt-4" type="submit" primary>Save</x-form.button>
             </form>
-        </div>
-    </template>
-
+        </template>
+    @endif
     <template is-modal="addCol">
         <div class="flex flex-col w-full gap-4 p-4">
             <form class="flex flex-col gap-4">

@@ -32,6 +32,7 @@ Route::middleware(["auth", "auth.session", "userInTeam"])->post("team/{team_id}u
 
 Route::middleware(["auth", "auth.session", "userInTeam"])->post("team/{team_id}/board", [BoardController::class, "createBoard"])->name("createBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}", [BoardController::class, "showBoard"])->name("board");
+Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/delete", [BoardController::class, "deleteBoard"])->name("deleteBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}", [BoardController::class, "updateBoard"])->name("updateBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}/data", [BoardController::class, "getData"])->name("boardJson");
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/column", [BoardController::class, "addColumn"])->name("addCol");

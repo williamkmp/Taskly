@@ -53,7 +53,7 @@ class TeamController extends Controller
         $selectedTeam = Team::find($team_id);
 
         if ($selectedTeam == null) {
-            return redirect()->back()->withErrors("This team is alredy deleted please contact team owner");
+            return redirect()->route("home")->withErrors("This team is alredy deleted please contact team owner");
         }
 
         $selectedTeam->name = $request->team_name;
@@ -96,12 +96,6 @@ class TeamController extends Controller
     public function showTeam($team_id)
     {
         $team_id = intval($team_id);
-        $user_id = Auth::user()->id;
-
-        if (!$this->teamLogic->userHasAccsess($user_id, $team_id)) {
-            return redirect()->back()->with('notif', ["You don't have access for that team, please try again or cantact the owner."]);
-        }
-
         $selected_team = Team::find($team_id);
         $team_owner = $this->teamLogic->getTeamOwner($selected_team->id);
         $team_members = $this->teamLogic->getTeamMember($selected_team->id);
@@ -133,24 +127,15 @@ class TeamController extends Controller
             ->with("invites", $invites);
     }
 
-    public function searchBoard(Request $request)
+    public function searchBoard(Request $request, $team_id)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             "team_id" => "required|integer",
             "user_id" => "required|integer",
             "board_name" => "required",
         ]);
 
         $team_id = intval($request->team_id);
-        $user_id = Auth::user()->id;
-
-        if (!$this->teamLogic->userHasAccsess($user_id, $team_id)) {
-            return redirect()->route("home")->with('notif', ["You don't have access for that team, please try again or cantact the owner."]);
-        }
-
-        if ($validator->fails()) {
-            return redirect()->route("viewTeam", ["team_id" => intval($request->team_id)]);
-        }
 
         $request->session()->flash("__old_board_name", $request->board_name);
         $team_id = intval($request->team_id);
@@ -168,7 +153,7 @@ class TeamController extends Controller
             ->with("boards", $team_boards);
     }
 
-    public function getInvite($user_id, $team_id)
+    public function getInvite($team_id, $user_id)
     {
         $user_id = intval($user_id);
         $team_id = intval($team_id);
@@ -192,7 +177,7 @@ class TeamController extends Controller
         ]);
     }
 
-    public function acceptInvite($user_id, $team_id)
+    public function acceptInvite($team_id, $user_id)
     {
         $user_id = intval($user_id);
         $team_id = intval($team_id);
@@ -238,7 +223,7 @@ class TeamController extends Controller
         return response()->json(["message" => "delete success"]);
     }
 
-    public function inviteMembers(Request $request)
+    public function inviteMembers(Request $request, $team_id)
     {
         $emails = $request->emails;
         $team_id = intval($request->team_id);
@@ -266,7 +251,7 @@ class TeamController extends Controller
         return redirect()->back()->with('notif', ["Success\nInvite sent, please wait."]);
     }
 
-    public function deleteTeam(Request $request)
+    public function deleteTeam(Request $request, $team_id)
     {
         $request->validate([
             "team_id" => "required"
@@ -277,7 +262,7 @@ class TeamController extends Controller
         return redirect()->route("home")->with("notif", ["Deleted\nTeam deleted successfully"]);
     }
 
-    public function leaveTeam(Request $request)
+    public function leaveTeam(Request $request, $team_id)
     {
         $request->validate([
             "team_id" => "required",
