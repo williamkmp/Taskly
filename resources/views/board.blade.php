@@ -41,8 +41,8 @@
 
 
 @section('content')
-    <x-card />
-    <x-column />
+    <x-card teamid="{{ $board->team_id }}"/>
+    <x-column teamid="{{ $board->team_id }}" />
     <div id="board-background"
         class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
         <section class="flex h-full min-w-full gap-4 p-4">
@@ -64,7 +64,7 @@
         <div class="flex flex-col w-full gap-4 p-4">
             <h1 class="text-3xl font-bold">Edit Board</h1>
             <hr>
-            <form action="{{ route('updateBoard', ['board_id' => $board->id]) }}" method="POST"
+            <form action="{{ route('updateBoard', ['board_id' => $board->id, 'team_id' => $board->id]) }}" method="POST"
                 class="flex flex-col gap-4">
                 @csrf
                 <input type="hidden" name="board_id" value="{{ $board->id }}">
@@ -169,7 +169,7 @@
 
             refresh() {
                 if (this.IS_EDITING) return;
-                ServerRequest.get(`{{ route('boardJson', ['board_id' => $board->id]) }}`)
+                ServerRequest.get(`{{ route('boardJson', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}`)
                     .then(response => {
                         if (this.IS_EDITING) return;
                         this.columnList = [];
@@ -218,7 +218,7 @@
                 column.mountTo(board);
                 ModalView.close();
                 ServerRequest.post(
-                    `{{ route('addCol', ['board_id' => $board->id]) }}`, {
+                    `{{ route('addCol', ['board_id' => $board->id, 'team_id' => $board->id]) }}`, {
                         board_id: `{{ $board->id }}`,
                         column_name: colName
                     }).then(response => {

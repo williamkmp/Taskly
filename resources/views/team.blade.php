@@ -293,7 +293,7 @@
 
 
                         @foreach ($boards as $board)
-                            <a href="{{ route('board', ['board_id' => $board->id]) }}"
+                            <a href="{{ route('board', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}"
                                 class="flex cursor-pointer select-none flex-col transition duration-300 border border-gray-200 shadow-xl rounded-xl h-32 w-72 hover:shadow-2xl bg-grad-{{ $board->pattern }} overflow-hidden">
                                 <div class="flex-grow w-full p-4">
 

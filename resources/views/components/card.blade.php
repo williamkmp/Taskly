@@ -1,3 +1,5 @@
+@props(['teamid'])
+
 <template id="card" class="!bg-gray-500">
     <div data-role="card" draggable="true"
         class="w-full px-4 py-2 text-sm bg-white border border-gray-200 cursor-pointer select-none line-clamp-3 rounded-xl">
@@ -32,7 +34,7 @@
 
                     const board_id = this.board.ref.dataset.id;
 
-                    ServerRequest.post(`{{ url('/') }}/board/${board_id}/card/reorder`, {
+                    ServerRequest.post(`{{ url('team/'.$teamid.'/board/${board_id}/card/reorder') }}`, {
                             column_id: this.ref.closest("div[data-role='column']").dataset.id,
                             middle_id: this.ref.dataset.id,
                             bottom_id: this.ref.nextElementSibling?.dataset?.id || null,

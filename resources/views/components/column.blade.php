@@ -1,3 +1,4 @@
+@props(['teamid'])
 <template id="column">
     <div data-role="column"
         class="flex flex-col flex-shrink-0 max-h-full border-2 shadow-lg group h-min border-slate-50 w-72 rounded-xl bg-slate-100">
@@ -72,7 +73,7 @@
 
                     const board_id = this.board.ref.dataset.id;
 
-                    ServerRequest.post(`{{ url('/') }}/board/${board_id}/column/reorder`, {
+                    ServerRequest.post(`{{ url('team/'.$teamid.'/board/${board_id}/column/reorder') }}`, {
                             middle_id: this.ref.dataset.id,
                             right_id: this.ref.nextElementSibling?.dataset?.id || null,
                             left_id: this.ref.previousElementSibling?.dataset?.id || null,
@@ -147,7 +148,7 @@
 
                     const newCard = new Card(null, cardValue);
                     newCard.mountTo(this);
-                    ServerRequest.post(`{{ url('/') }}/board/${board_id}/column/${column_id}/card`, {
+                    ServerRequest.post(`{{ url('team/'.$teamid.'/board/${board_id}/column/${column_id}/card') }}`, {
                             name: cardValue
                         })
                         .then((response) => {
