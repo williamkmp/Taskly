@@ -18,8 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger("previous_id")->nullable();
             $table->unsignedBigInteger("next_id")->nullable();
 
-            $table->foreign('previous_id')->references('id')->on('columns');
-            $table->foreign('next_id')->references('id')->on('columns');
+            $table->foreign('previous_id')->references('id')->on('columns')->onDelete("set null");
+            $table->foreign('next_id')->references('id')->on('columns')->onDelete("set null");
             $table->timestamps();
         });
     }
