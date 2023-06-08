@@ -176,4 +176,44 @@ class BoardLogic
         if($previous_top_card) $previous_top_card->save();
         return $target_card;
     }
+
+    public function moveCol(int $target_column_id, int $right_column_id, int $left_column_id)
+    {
+        $target_column = Column::find($target_column_id);
+        $previous_top_column = null;
+        $previous_bottom_column = null;
+        $top_column = null;
+        $bottom_column = null;
+
+        if($right_column_id != 0) $bottom_column = Column::find($right_column_id);
+        if($bottom_column != null) $top_column = Column::find($bottom_column->previous_id);
+        if($target_column->previous_id) $previous_top_column = Column::find($target_column->previous_id);
+        if($target_column->next_id) $previous_bottom_column = Column::find($target_column->next_id);
+        if($bottom_column == null && $top_column == null) $top_column = Column::find($left_column_id);
+
+        //insert in middle
+        $target_column->previous_id = null;
+        $target_column->next_id = null;
+        if($previous_bottom_column){
+            $previous_bottom_column->previous_id = $previous_top_column ? $previous_top_column->id : null;
+        }
+        if($previous_top_column){
+            $previous_top_column->next_id = $previous_bottom_column ? $previous_bottom_column->id : null;
+        }
+        if($bottom_column){
+            $target_column->next_id = $bottom_column->id;
+            $bottom_column->previous_id = $target_column->id;
+        }
+        if($top_column){
+            $target_column->previous_id = $top_column->id;
+            $top_column->next_id = $target_column->id;
+        }
+
+        $target_column->save();
+        if($bottom_column) $bottom_column->save();
+        if($top_column) $top_column->save();
+        if($previous_bottom_column) $previous_bottom_column->save();
+        if($previous_top_column) $previous_top_column->save();
+        return $target_column;
+    }
 }

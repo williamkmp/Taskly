@@ -45,10 +45,10 @@
     <x-column />
     <div class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
         <section class="flex h-full min-w-full gap-4 p-4">
-            <div class="flex h-full gap-4" id="column-container" data-id="{{ $board->id }}">
+            <div class="flex h-full gap-4" id="column-container" data-role="board" data-id="{{ $board->id }}">
             </div>
             <div onclick="ModalView.show('addCol')"
-                class="flex flex-col gap-2 flex-shrink-0 h-min shadow-lg w-[22rem] rounded-xl py-2 px-4 bg-slate-50 hover:scale-105 hover:relative transition select-none cursor-pointer">
+                class="flex flex-col flex-shrink-0 gap-2 px-4 py-2 transition shadow-lg cursor-pointer select-none h-min w-72 rounded-xl bg-slate-50 hover:scale-105 hover:relative">
                 <div class="flex items-center justify-center gap-4 text-black">
                     <x-fas-plus class="w-4 h-4" />
                     <p>Add...</p>
@@ -106,6 +106,7 @@
         class Board {
             constructor(boardJson) {
                 this.id = boardJson.id;
+                this.DRAG_MODE = null;
                 this.IS_EDITING = false;
                 this.ref = DOM.find("#column-container");
                 this.columnList = [];
@@ -119,10 +120,45 @@
                 setInterval(() => {
                     this.refresh();
                 }, 2000);
+
+                this.ref.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    let currentDraggingCol = DOM.find("div[data-role='column'].is-dragging");
+                    if (currentDraggingCol == null) return;
+                    let closestBottomColFromMouse = null;
+                    let closestOffset = Number.NEGATIVE_INFINITY;
+                    let staticCols = this.ref.querySelectorAll(
+                        ":scope > div[data-role='column']:not(.is-dragging)");
+
+                    //calculate closestTask
+                    staticCols.forEach((card) => {
+                        let {
+                            left,
+                            right
+                        } = card.getBoundingClientRect();
+
+                        let offset = event.clientX - ((left + right) / 2);
+
+                        if (offset < 0 && offset > closestOffset) {
+                            closestOffset = offset;
+                            closestBottomColFromMouse = card;
+                        }
+                    });
+
+                    if (closestBottomColFromMouse) {
+                        this.ref.insertBefore(
+                            currentDraggingCol,
+                            closestBottomColFromMouse
+                        );
+                    } else {
+                        this.ref.appendChild(currentDraggingCol);
+                    }
+
+                })
             }
 
             addCol(id, name, cards) {
-                let column = new Column(id, name, cards);
+                let column = new Column(this, id, name, cards);
                 this.columnList.push(column);
                 column.mountTo(this);
             }
@@ -150,18 +186,18 @@
         const board = new Board(@json($board));
 
         ModalView.onShow("addCol", (modal) => {
+            board.IS_EDITING = true;
             modal.querySelector("#input-text-column_name").focus();
             modal.querySelector("form").addEventListener("submit", (e) => {
-                isEditing = true;
                 e.preventDefault();
                 const colName = modal.querySelector("#input-text-column_name").value.trim();
                 if (colName === "") {
                     ModalView.close();
-                    isEditing = false;
+                    board.IS_EDITING = false;
                     return;
                 }
 
-                const column = new Column(null, colName);
+                const column = new Column(board, null, colName);
                 column.mountTo(board);
                 ModalView.close();
                 ServerRequest.post(
@@ -170,6 +206,8 @@
                         column_name: colName
                     }).then(response => {
                     column.setId(response.data.id);
+                }).then(response =>{
+                    board.IS_EDITING = false
                 });
             });
         });

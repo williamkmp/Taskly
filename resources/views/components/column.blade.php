@@ -1,26 +1,26 @@
 <template id="column">
     <div data-role="column"
-        class="flex flex-col flex-shrink-0 max-h-full px-4 py-2 border-2 shadow-lg group h-min border-slate-50 w-72 rounded-xl bg-slate-50">
-        <header class="select-none">
+        class="flex flex-col flex-shrink-0 max-h-full border-2 shadow-lg group h-min border-slate-50 w-72 rounded-xl bg-slate-100">
+        <header class="px-4 py-2 select-none rounded-t-xl" draggable="true">
             <h2 class="w-full overflow-hidden text-sm font-bold truncate"></h2>
         </header>
-        <section class="w-full mt-2 overflow-hidden overflow-y-auto">
-            <div class="flex flex-col gap-3 py-2" id="card-container">
+        <section class="w-full overflow-hidden overflow-y-auto">
+            <div class="flex flex-col gap-3 p-2" id="card-container">
 
             </div>
         </section>
-        <form class="flex flex-col w-full gap-2 mt-2 overflow-hidden text-sm max-h-0">
+        <form class="flex flex-col w-full gap-1 px-2 mt-2 overflow-hidden text-sm max-h-0">
             <textarea
                 class="w-full px-4 py-2 mb-1 bg-white border border-gray-200 shadow cursor-pointer resize-none select-none line-clamp-3 rounded-xl"
                 id="card" cols="30" rows="2" maxlength="100"></textarea>
             <button id="btn-submit"
-                class="flex items-center w-full gap-2 py-1 pl-4 transition select-none rounded-2xl hover:bg-slate-200">
+                class="flex items-center w-full gap-2 py-1 pl-4 mb-2 transition select-none rounded-2xl hover:bg-slate-200">
                 <x-fas-plus class="w-4 h-4" />
                 Add Card...
             </button>
         </form>
         <button id="btn-add"
-            class="flex items-center w-full gap-2 py-1 pl-4 mt-0 text-sm transition select-none rounded-2xl hover:bg-slate-200">
+            class="flex items-center gap-2 py-1 pl-4 mx-2 mb-2 text-sm transition select-none rounded-2xl hover:bg-slate-200">
             <x-fas-plus class="w-4 h-4" />
             Add Card...
         </button>
@@ -32,8 +32,8 @@
     <Script>
         const columnTemplate = document.querySelector("template#column");
         class Column {
-            constructor(id, name, cards = []) {
-                this.board = null;
+            constructor(board, id, name, cards = []) {
+                this.board = board;
                 const content = columnTemplate.content.cloneNode(true);
                 const node = document.createElement("div");
                 node.append(content);
@@ -48,6 +48,41 @@
                 const formAdd = this.ref.querySelector(":scope > form");
                 const inputCard = this.ref.querySelector(":scope > form > textarea#card");
                 const cardContainer = this.ref.querySelector("#card-container");
+                const colHeader = this.ref.querySelector(":scope > header");
+                colHeader.setAttribute('draggable', (id != null));
+
+
+                colHeader.addEventListener('dragstart', () => {
+                    this.board.IS_EDITING = true;
+                    this.ref.classList.add("is-dragging");
+                    this.ref.classList.add("opacity-50");
+                });
+
+                colHeader.addEventListener('dragend', () => {
+                    this.ref.classList.remove("is-dragging");
+                    colHeader.setAttribute('draggable', false);
+                    this.ref.classList.remove("opacity-50");
+
+                    console.log("BOARD_UPD");
+                    console.log({
+                        middle_id: this.ref.dataset.id,
+                        bottom_id: this.ref.nextElementSibling?.dataset?.id || null,
+                        top_id: this.ref.previousElementSibling?.dataset?.id || null,
+                    });
+
+                    const board_id = this.board.ref.dataset.id;
+
+                    ServerRequest.post(`{{ url('/') }}/board/${board_id}/column/reorder`, {
+                            middle_id: this.ref.dataset.id,
+                            right_id: this.ref.nextElementSibling?.dataset?.id || null,
+                            left_id: this.ref.previousElementSibling?.dataset?.id || null,
+                        })
+                        .then((response) => {
+                            this.board.IS_EDITING = false;
+                            colHeader.setAttribute('draggable', true);
+                            console.log(response.data);
+                        });
+                });
 
                 btnAdd.addEventListener("click", () => {
                     board.IS_EDITING = true;
@@ -59,6 +94,7 @@
                 cardContainer.addEventListener("dragover", (e) => {
                     e.preventDefault();
                     let currentDraggingCard = DOM.find("div[data-role='card'].is-dragging");
+                    if (currentDraggingCard == null) return;
                     let closestBottomCardFromMouse = null;
                     let closestOffset = Number.NEGATIVE_INFINITY;
                     let staticCards = cardContainer.querySelectorAll(
@@ -121,7 +157,7 @@
                 });
 
                 for (const cardData of cards) {
-                    const card = new Card(cardData.id, cardData.name);
+                    const card = new Card(cardData.id, cardData.name, this.board);
                     card.mountTo(this);
                 }
 

@@ -127,4 +127,21 @@ class BoardController extends Controller
 
         return response()->json($updatedCard);
     }
+
+    public function reorderCol(Request $request, $board_id)
+    {
+        $user_id = Auth::user()->id;
+        $board_id = intval($board_id);
+        $middle_id = intval($request->middle_id);
+        $right_id = intval($request->right_id);
+        $left_id = intval($request->left_id);
+
+        if(!$this->boardLogic->hasAccess($user_id, $board_id)){
+            return response()->json(["url" => route("home")], HttpResponse::HTTP_BAD_REQUEST);
+        }
+
+        $updatedCol = $this->boardLogic->moveCol($middle_id, $right_id, $left_id);
+
+        return response()->json($updatedCol);
+    }
 }
