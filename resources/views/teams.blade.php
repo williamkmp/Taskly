@@ -4,6 +4,19 @@
     <h1 class="text-xl font-bold">Teams</h1>
 @endsection
 
+@section('app-side')
+    <div class="flex flex-col gap-6 px-8 pl-4 mt-2">
+
+        <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
+            <div data-role="menu-item" onclick="ModalView.show('createTeam')"
+                class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
+                <x-fas-cube class="w-4 h-4" />
+                <p> Add Team </p>
+            </div>
+        </section>
+
+    </div>
+@endsection
 
 @section('content')
     <template is-modal="createTeam">
@@ -135,12 +148,13 @@
             <hr>
 
             <div class="flex flex-wrap gap-x-8 gap-y-6">
-                <div onclick="ModalView.show('createTeam')"
-                    class="flex flex-col items-center justify-center gap-2 text-gray-400 transition duration-300 bg-gray-100 shadow-md cursor-pointer select-none w-72 h-52 rounded-xl hover:shadow-2xl">
-                    <x-fas-plus class="w-8 h-8" />
-                    <p>Create Team</p>
-                </div>
-
+                @if ($teams->isEmpty())
+                    <div onclick="ModalView.show('createTeam')"
+                        class="flex flex-col items-center justify-center gap-2 text-gray-400 transition duration-300 bg-gray-100 shadow-md cursor-pointer select-none w-72 h-52 rounded-xl hover:shadow-2xl">
+                        <x-fas-plus class="w-8 h-8" />
+                        <p>Create Team</p>
+                    </div>
+                @endif
                 @foreach ($teams as $team)
                     <a href="{{ route('viewTeam', ['team_id' => $team->id]) }}"
                         class="flex cursor-pointer select-none flex-col transition duration-300 border border-gray-200 shadow-xl rounded-xl h-52 w-72 hover:shadow-2xl bg-pattern-{{ $team->pattern }} overflow-hidden">
