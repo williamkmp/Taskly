@@ -34,7 +34,7 @@
                     <p> Edit </p>
                 </div>
                 <hr class="w-full border">
-                <div data-role="menu-item" onclick="ModalView.show('deleteTeam')"
+                <div data-role="menu-item" onclick="ModalView.show('deleteBoard')"
                     class="flex items-center w-full gap-3 px-6 py-2 text-red-600 cursor-pointer select-none hover:bg-black hover:text-white">
                     <x-fas-trash class="w-4 h-4" />
                     <p>Delete</p>
@@ -99,7 +99,7 @@
             </div>
         </template>
 
-        <template is-modal="deleteTeam">
+        <template is-modal="deleteBoard">
             <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
                 action="{{ route('deleteBoard', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}">
                 @csrf
@@ -214,13 +214,21 @@
                                 column.cards,
                             )
                         }
-
                         console.log("[BOARD]: refreshed...");
+                    }).catch((error) => {
+                        console.log("ERROR");
+                        console.log(error);
                     });
             }
         }
 
         const board = new Board(@json($board));
+
+        ModalView.onShow('deleteBoard', (modal) => {
+            modal.querySelectorAll("form[action][method]").forEach(
+                form => form.addEventListener("submit", () => PageLoader.show())
+            );
+        });
 
         ModalView.onShow("addCol", (modal) => {
             board.IS_EDITING = true;
