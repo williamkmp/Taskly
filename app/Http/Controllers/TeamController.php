@@ -272,6 +272,8 @@ class TeamController extends Controller
             "team_id" => "required"
         ]);
 
+        $team_id = intval($request->team_id);
+        $this->teamLogic->deleteTeam($team_id);
         return redirect()->route("home")->with("notif", ["Deleted\nTeam deleted successfully"]);
     }
 
@@ -283,9 +285,7 @@ class TeamController extends Controller
 
         $user_email  = Auth::user()->email;
         $team_id = intval($request->team_id);
-
         $this->teamLogic->deleteMembers($team_id, [$user_email]);
-
         return redirect()->route("home")->with("notif", ["Leave\nSuccessfully left team..."]);
     }
 }

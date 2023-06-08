@@ -183,4 +183,18 @@ class TeamLogic
 
         return;
     }
+
+    /**
+     * delete a certain team data, including boards,
+     * cards, and mebers data
+     *
+     * @param int $team_id team id
+     */
+    public function deleteTeam(int $team_id)
+    {
+        Board::where("team_id", $team_id)->delete();
+        UserTeam::where("team_id", $team_id)->delete();
+        Team::where("id", $team_id)->delete();
+        return;
+    }
 }
