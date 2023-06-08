@@ -34,14 +34,14 @@
 
         <div class="flex flex-col items-center content-center flex-1 h-full overflow-y-auto">
             <header data-role="app-header" class="sticky flex items-center justify-between w-full h-16 px-6 shadow">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-4">
                     <div id="sidebar-button" class="w-6 h-6" x-on:click="sidebar_is_open = !sidebar_is_open">
                         <template x-if="sidebar_is_open">
-                            <x-fas-square-caret-left />
+                            <x-fas-square-xmark />
                         </template>
 
                         <template x-if="!sidebar_is_open">
-                            <x-fas-square-caret-right />
+                            <x-fas-square-poll-horizontal />
                         </template>
                     </div>
 
