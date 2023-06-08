@@ -160,4 +160,27 @@ class TeamLogic
 
         return !($isAuthorized == null);
     }
+
+    /**
+     * delete list of members from a given team
+     * based of a given list of emails, if the
+     * email is non-existent then it will be ignored
+     * and continue to other emails.
+     *
+     * @param int $team_id team id
+     * @param array $emails member emaile to be removed from team
+     */
+    public function deleteMembers(int $team_id, array $emails)
+    {
+        $deletedUser = User::whereIn("email", $emails)->get();
+
+        foreach ($deletedUser as $user) {
+            UserTeam::where("team_id", $team_id)
+                ->where("user_id", $user->id)
+                ->where("status", "Member")
+                ->delete();
+        }
+
+        return;
+    }
 }

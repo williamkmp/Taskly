@@ -163,6 +163,8 @@ class TeamController extends Controller
             ->with("team", $selected_team)
             ->with("owner", $team_owner)
             ->with("members", $team_members)
+            ->with("patterns", TeamLogic::PATTERN)
+            ->with("backgrounds", BoardLogic::PATTERN)
             ->with("boards", $team_boards);
     }
 
@@ -232,17 +234,7 @@ class TeamController extends Controller
     public function deleteMembers(Request $request)
     {
         $team_id = intval($request->team_id);
-
-        $deletedUser = User::whereIn("email", $request->emails)->get();
-
-        foreach ($deletedUser as $user) {
-            UserTeam::where("team_id", $team_id)
-                ->where("user_id", $user->id)
-                ->where("status", "Member")
-                ->delete();
-        }
-
-
+        $this->teamLogic->deleteMembers($team_id, $request->emails);
         return response()->json(["message" => "delete success"]);
     }
 
@@ -272,5 +264,28 @@ class TeamController extends Controller
         }
 
         return redirect()->back()->with('notif', ["Success\nInvite sent, please wait."]);
+    }
+
+    public function deleteTeam(Request $request)
+    {
+        $request->validate([
+            "team_id" => "required"
+        ]);
+
+        return redirect()->route("home")->with("notif", ["Deleted\nTeam deleted successfully"]);
+    }
+
+    public function leaveTeam(Request $request)
+    {
+        $request->validate([
+            "team_id" => "required",
+        ]);
+
+        $user_email  = Auth::user()->email;
+        $team_id = intval($request->team_id);
+
+        $this->teamLogic->deleteMembers($team_id, [$user_email]);
+
+        return redirect()->route("home")->with("notif", ["Leave\nSuccessfully left team..."]);
     }
 }
