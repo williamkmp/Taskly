@@ -28,7 +28,8 @@
     class ServerRequest {
         static config = {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                'Accept': 'application/json'
             }
         };
 
@@ -80,7 +81,7 @@
             console.log(a)
         }
 
-        static newid(){
+        static newid() {
             this.id++;
             return this.id;
         }

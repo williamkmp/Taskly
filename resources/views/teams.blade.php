@@ -176,14 +176,6 @@
 
 @pushOnce('page')
     <script>
-        function waitResolve(timeout, response) {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve(response);
-                }, timeout);
-            });
-        }
-
         ModalView.onShow("acceptInvite", async (modal, payload) => {
             PageLoader.show();
             const header = modal.querySelector("#header-overlay");
@@ -198,7 +190,7 @@
             const btnNo = modal.querySelector("#btn-no");
 
             const response = await ServerRequest.get(
-                `{{ url('team/${payload.team_id}/invite/'.Auth::user()->id) }}`)
+                `{{ url('team/${payload.team_id}/invite/' . Auth::user()->id) }}`)
 
             header.classList.add(`bg-pattern-${response.data.team_pattern}`);
             teamDescription.textContent = response.data.team_description;
@@ -212,8 +204,14 @@
             btnNo.formAction = response.data.reject_url;
             if (!response.data.team_image) teamImage.style.display = "none";
             if (!response.data.owner_image) ownerImage.style.display = "none";
+            modal.querySelectorAll("a").forEach(
+                link => link.addEventListener("click", () => PageLoader.show())
+            );
 
-            console.log(response.data);
+            modal.querySelectorAll("button[type='submit']").forEach(
+                form => form.addEventListener("click", () => PageLoader.show())
+            );
+
             PageLoader.close();
         });
     </script>
