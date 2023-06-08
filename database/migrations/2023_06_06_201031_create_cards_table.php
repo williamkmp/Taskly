@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string("name");
             $table->string("description")->nullable();
 
-            $table->foreignId("column_id")->constrained();
+            $table->foreignId("column_id")->constrained()->onDelete("cascade");
             $table->unsignedBigInteger("previous_id")->nullable();
             $table->unsignedBigInteger("next_id")->nullable();
 
