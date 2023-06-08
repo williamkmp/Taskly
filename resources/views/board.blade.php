@@ -141,9 +141,9 @@
                         column.cards,
                     )
                 }
-                // setInterval(() => {
-                //     this.refresh();
-                // }, 2000);
+                setInterval(() => {
+                    this.refresh();
+                }, 1800);
 
                 this.ref.addEventListener("dragover", (e) => {
                     e.preventDefault();
