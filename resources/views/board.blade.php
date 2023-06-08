@@ -3,7 +3,7 @@
 @section('app-header')
     <div class="flex items-center gap-2">
         <h1 class="text-xl font-bold">Board: </h1>
-        <p class="text-xl">{{ $board->name }}</p>
+        <p class="text-xl" id="board-title">{{ $board->name }}</p>
     </div>
 @endsection
 
@@ -43,7 +43,8 @@
 @section('content')
     <x-card />
     <x-column />
-    <div class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
+    <div id="board-background"
+        class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
         <section class="flex h-full min-w-full gap-4 p-4">
             <div class="flex h-full gap-4" id="column-container" data-role="board" data-id="{{ $board->id }}">
             </div>
@@ -109,6 +110,9 @@
                 this.DRAG_MODE = null;
                 this.IS_EDITING = false;
                 this.ref = DOM.find("#column-container");
+                this.background = DOM.find("#board-background");
+                this.title = DOM.find("#board-title");
+
                 this.columnList = [];
                 for (const column of boardJson.columns) {
                     this.addCol(
@@ -170,6 +174,18 @@
                         if (this.IS_EDITING) return;
                         this.columnList = [];
                         const json = response.data;
+
+                        //update board
+                        this.title.textContent = json.name;
+                        if (!this.background.classList.contains("bg-grad-" + json.pattern)) {
+                            this.background.classList.remove(
+                                ...Array.from(this.background.classList.entries())
+                                .map(([, c]) => c)
+                                .filter(c => c.startsWith('bg-grad')));
+                            this.background.classList.add("bg-grad-" + json.pattern);
+                        }
+
+                        //update columns and cards
                         this.ref.innerHTML = "";
                         for (const column of json.columns) {
                             this.addCol(
@@ -178,6 +194,7 @@
                                 column.cards,
                             )
                         }
+
                         console.log("[BOARD]: refreshed...");
                     });
             }
@@ -206,7 +223,7 @@
                         column_name: colName
                     }).then(response => {
                     column.setId(response.data.id);
-                }).then(response =>{
+                }).then(response => {
                     board.IS_EDITING = false
                 });
             });

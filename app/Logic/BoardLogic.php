@@ -130,7 +130,7 @@ class BoardLogic
             $column = $column->nextColumn;
         }
         $board->columns = $columns->values();
-        $board->setHidden(["team_id", "image_path", "created_at", "updated_at", "pattern"]);
+        $board->setHidden(["team_id", "image_path", "created_at", "updated_at"]);
         return $board;
     }
 
