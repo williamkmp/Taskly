@@ -13,7 +13,7 @@
         <form class="flex flex-col w-full gap-1 px-2 mt-2 overflow-hidden text-sm max-h-0">
             <textarea
                 class="w-full px-4 py-2 mb-1 bg-white border border-gray-200 shadow cursor-pointer resize-none select-none line-clamp-3 rounded-xl"
-                id="card" cols="30" rows="2" maxlength="100"></textarea>
+                id="card" cols="30" rows="3" maxlength="95"></textarea>
             <button id="btn-submit"
                 class="flex items-center w-full gap-2 py-1 pl-4 mb-2 transition select-none rounded-2xl hover:bg-slate-200">
                 <x-fas-plus class="w-4 h-4" />
@@ -73,7 +73,7 @@
 
                     const board_id = this.board.ref.dataset.id;
 
-                    ServerRequest.post(`{{ url('team/'.$teamid.'/board/${board_id}/column/reorder') }}`, {
+                    ServerRequest.post(`{{ url('team/' . $teamid . '/board/${board_id}/column/reorder') }}`, {
                             middle_id: this.ref.dataset.id,
                             right_id: this.ref.nextElementSibling?.dataset?.id || null,
                             left_id: this.ref.previousElementSibling?.dataset?.id || null,
@@ -129,7 +129,12 @@
 
                 inputCard.addEventListener("blur", () => {
                     btnSubmit.click();
-                })
+                });
+
+                inputCard.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter")
+                        btnSubmit.click();
+                });
 
                 btnSubmit.addEventListener("click", (event) => {
                     event.preventDefault();
@@ -148,10 +153,12 @@
 
                     const newCard = new Card(null, cardValue);
                     newCard.mountTo(this);
-                    ServerRequest.post(`{{ url('team/'.$teamid.'/board/${board_id}/column/${column_id}/card') }}`, {
-                            name: cardValue
-                        })
+                    ServerRequest.post(
+                            `{{ url('team/' . $teamid . '/board/${board_id}/column/${column_id}/card') }}`, {
+                                name: cardValue
+                            })
                         .then((response) => {
+                            console.log(response.data.name);
                             newCard.setId(response.data.id);
                             board.IS_EDITING = false;
                         });

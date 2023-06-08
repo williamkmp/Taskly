@@ -2,7 +2,7 @@
 
 <template id="card" class="!bg-gray-500">
     <div data-role="card" draggable="true"
-        class="w-full px-4 py-2 text-sm bg-white border border-gray-200 cursor-pointer select-none line-clamp-3 rounded-xl">
+        class="w-full px-4 py-2 overflow-hidden text-sm bg-white border border-gray-200 cursor-pointer select-none line-clamp-3 rounded-xl">
     </div>
 </template>
 
