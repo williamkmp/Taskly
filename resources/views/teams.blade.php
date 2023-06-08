@@ -176,6 +176,12 @@
 
 @pushOnce('page')
     <script>
+        ModalView.onShow("createTeam", (modal) =>{
+            modal.querySelectorAll("form[method][action]").forEach(
+                form => form.addEventListener("submit", () => PageLoader.show())
+            );
+        });
+
         ModalView.onShow("acceptInvite", async (modal, payload) => {
             PageLoader.show();
             const header = modal.querySelector("#header-overlay");

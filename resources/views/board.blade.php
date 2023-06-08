@@ -143,7 +143,7 @@
                 }
                 setInterval(() => {
                     this.refresh();
-                }, 1800);
+                }, 3000);
 
                 this.ref.addEventListener("dragover", (e) => {
                     e.preventDefault();
