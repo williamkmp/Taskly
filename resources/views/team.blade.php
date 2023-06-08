@@ -50,9 +50,15 @@
                     <x-fas-table-columns class="w-4 h-4" />
                     <p>Add Board</p>
                 </div>
+                <hr class="w-full border">
+                <div data-role="menu-item" onclick="ModalView.show('deleteTeam')"
+                    class="flex items-center w-full gap-3 px-6 py-2 text-red-600 cursor-pointer select-none hover:bg-black hover:text-white">
+                    <x-fas-trash class="w-4 h-4" />
+                    <p>Delete</p>
+                </div>
             @else
-                <div data-role="menu-item" onclick="ModalView.show('updateTeam')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
+                <div data-role="menu-item" onclick="ModalView.show('leaveTeam')"
+                    class="flex items-center w-full gap-3 px-6 py-2 text-red-600 cursor-pointer select-none hover:bg-black hover:text-white">
                     <x-fas-right-from-bracket class="w-4 h-4" />
                     <p> Leave Team </p>
                 </div>
@@ -77,7 +83,7 @@
             <div class="flex flex-col w-full gap-4 p-4">
                 <h1 class="text-3xl font-bold">Edit Team</h1>
                 <hr>
-                <form action="{{ route('doTeamDataUpdate') }}" method="POST" class="flex flex-col gap-4">
+                <form action="{{ route('doTeamDataUpdate', ['team_id' => $team->id]) }}" method="POST" class="flex flex-col gap-4">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
                     <x-form.text name="team_name" label="Team's Name" value="{{ $team->name }}" required />
@@ -110,7 +116,7 @@
             <div class="flex flex-col w-full gap-4 p-4">
                 <h1 class="text-3xl font-bold">Create Board</h1>
                 <hr>
-                <form action="{{ route('createBoard') }}" method="POST" class="flex flex-col gap-4">
+                <form action="{{ route('createBoard', ['team_id' => $team->id]) }}" method="POST" class="flex flex-col gap-4">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
                     <x-form.text name="board_name" label="Board's Name" required />
@@ -183,7 +189,7 @@
                         </x-form.button>
                     </div>
 
-                    <form method="POST" id="invite-members-form" action="{{ route('doInviteMembers') }}"
+                    <form method="POST" id="invite-members-form" action="{{ route('doInviteMembers', ['team_id' => $team->id]) }}"
                         class="flex justify-center w-full p-4 overflow-hidden overflow-y-auto border-2 border-black h-80 rounded-xl">
                         @csrf
                         <input type="hidden" name="team_id", value="{{ $team->id }}">
@@ -205,6 +211,32 @@
                     <x-form.button primary type="submit" id="save-btn" form="invite-members-form">Save</x-form.button>
                 </div>
             </div>
+        </template>
+
+        <template is-modal="deleteTeam">
+            <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
+                action="{{ route('doDeleteTeam', ['team_id' => $team->id]) }}">
+                @csrf
+                <input type="hidden" name="team_id" value="{{ $team->id }}">
+                <p class="mb-6 text-lg text-center"> Are you sure you want to delete this team?</p>
+                <div class="flex gap-6">
+                    <x-form.button type="submit">Yes</x-form.button>
+                    <x-form.button type="button" action="ModalView.close()" primary>No</x-form.button>
+                </div>
+            </form>
+        </template>
+    @else
+        <template is-modal="leaveTeam">
+            <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
+                action="{{ route('doLeaveTeam', ['team_id' => $team->id]) }}">
+                @csrf
+                <input type="hidden" name="team_id" value="{{ $team->id }}">
+                <p class="mb-6 text-lg text-center"> Are you sure you want to leave this team?</p>
+                <div class="flex gap-6">
+                    <x-form.button type="submit">Yes</x-form.button>
+                    <x-form.button type="button" action="ModalView.close()" primary>No</x-form.button>
+                </div>
+            </form>
         </template>
     @endif
 
@@ -236,7 +268,7 @@
                     </header>
 
                     {{-- Search Bar --}}
-                    <form class="flex items-center w-full gap-4" id="search-form" action="{{ route('searchBoard') }}"
+                    <form class="flex items-center w-full gap-4" id="search-form" action="{{ route('searchBoard', ['team_id' => $team->id]) }}"
                         method="GET">
                         @csrf
                         <input type="hidden" name="team_id" value="{{ $team->id }}">
@@ -308,10 +340,12 @@
     <script>
         @if (Auth::user()->id == $owner->id)
             ModalView.onShow('createBoard', (modal) => {
-                modal.querySelectorAll("a").forEach(
-                    link => link.addEventListener("click", () => PageLoader.show())
+                modal.querySelectorAll("form[action][method]").forEach(
+                    form => form.addEventListener("submit", () => PageLoader.show())
                 );
+            });
 
+            ModalView.onShow('deleteTeam', (modal) => {
                 modal.querySelectorAll("form[action][method]").forEach(
                     form => form.addEventListener("submit", () => PageLoader.show())
                 );
@@ -356,7 +390,7 @@
                     try {
                         PageLoader.show();
                         const pfpBlobData = await getCropperImageBlob(imageEditor);
-                        let response = await ServerRequest.post("{{ route('doChangeTeamImage') }}", {
+                        let response = await ServerRequest.post("{{ route('doChangeTeamImage', ['team_id' => $team->id]) }}", {
                             image: pfpBlobData,
                             team_id: `{{ $team->id }}`
                         });
@@ -404,7 +438,7 @@
                         .map(card => card.dataset.email);
 
                     try {
-                        await ServerRequest.post("{{ route('deleteTeamMember') }}", {
+                        await ServerRequest.post("{{ route('deleteTeamMember', ['team_id' => $team->id]) }}", {
                             team_id: `{{ $team->id }}`,
                             user_id: `{{ Auth::user()->id }}`,
                             emails: deleteEmailList,
