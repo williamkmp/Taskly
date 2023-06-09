@@ -143,7 +143,7 @@
                 }
                 setInterval(() => {
                     this.refresh();
-                }, 3000);
+                }, 1900);
 
                 this.ref.addEventListener("dragover", (e) => {
                     e.preventDefault();
@@ -246,7 +246,7 @@
                 column.mountTo(board);
                 ModalView.close();
                 ServerRequest.post(
-                    `{{ route('addCol', ['board_id' => $board->id, 'team_id' => $board->id]) }}`, {
+                    `{{ route('addCol', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}`, {
                         board_id: `{{ $board->id }}`,
                         column_name: colName
                     }).then(response => {

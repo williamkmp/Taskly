@@ -39,7 +39,7 @@ class BoardController extends Controller
         return redirect()->back()->with("notif", ["Success\nBoard created successfully!"]);
     }
 
-    public function addColumn(Request $request, $board_id, $team_id)
+    public function addColumn(Request $request, $team_id, $board_id,)
     {
         $request->validate([
             "board_id" => "required",
