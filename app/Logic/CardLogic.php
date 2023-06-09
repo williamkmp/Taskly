@@ -37,7 +37,7 @@ class CardLogic
     function cardAddEvent(int $card_id, int $user_id, string $content){
         $event = CardHistory::create([
             "user_id" => $user_id,
-            "card_id" => $user_id,
+            "card_id" => $card_id,
             "type" => "event",
             "content" => $content,
         ]);
@@ -48,7 +48,7 @@ class CardLogic
     function cardComment(int $card_id, int $user_id, string $content){
         $event = CardHistory::create([
             "user_id" => $user_id,
-            "card_id" => $user_id,
+            "card_id" => $card_id,
             "type" => "comment",
             "content" => $content,
         ]);
@@ -62,5 +62,24 @@ class CardLogic
             ->orderBy("created_at")
             ->get();
         return $evets;
+    }
+
+    function deleteCard(int $target_card_id){
+        $target_card = Card::find($target_card_id);
+        $top_card = null;
+        $bottom_card = null;
+        if(!$target_card) return;
+        if($target_card->previous_id) $top_card = Card::find($target_card->previous_id);
+        if($target_card->next_id) $bottom_card = Card::find($target_card->next_id);
+
+        if($top_card){
+            $top_card->next_id = $bottom_card ? $bottom_card->id : null;
+            $top_card->save();
+        }
+        if($bottom_card){
+            $bottom_card->previous_id = $top_card ? $top_card->id : null;
+            $bottom_card->save();
+        }
+        $target_card->delete();
     }
 }

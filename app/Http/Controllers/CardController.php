@@ -44,7 +44,7 @@ class CardController extends Controller
     public function assignSelf(Request $request, $team_id, $board_id, $card_id)
     {
         $user_id = Auth::user()->id;
-        $card_id= intval($card_id);
+        $card_id = intval($card_id);
         $this->cardLogic->addUser($card_id, $user_id);
         $this->cardLogic->cardAddEvent($card_id, $user_id, "Joined card.");
         return redirect()->back()->with("notif", ["Success\nAdded yourself to the card"]);
@@ -53,17 +53,20 @@ class CardController extends Controller
     public function leaveCard(Request $request, $team_id, $board_id, $card_id)
     {
         $user_id = Auth::user()->id;
-        $card_id= intval($card_id);
+        $card_id = intval($card_id);
         $this->cardLogic->removeUser($card_id, $user_id);
         $this->cardLogic->cardAddEvent($card_id, $user_id, "Left card.");
         return redirect()
-                ->route("board", ["team_id" => $team_id, "board_id" => $board_id])
-                ->with("notif", ["Success\nQuit Card"]);
+            ->route("board", ["team_id" => $team_id, "board_id" => $board_id])
+            ->with("notif", ["Success\nQuit Card"]);
     }
 
     public function deleteCard(Request $request, $team_id, $board_id, $card_id)
     {
-        return redirect()->back();
+        $this->cardLogic->deleteCard(intval($card_id));
+        return redirect()
+            ->route("board", ["team_id" => $team_id, "board_id" => $board_id])
+            ->with("notif", ["Success\nCard is deleted"]);
     }
 
     public function updateCard(Request $request, $team_id, $board_id, $card_id)
