@@ -42,6 +42,11 @@ Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/column/delete", [BoardController::class, "deleteCol"])->name("deleteCol");
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/card/reorder", [BoardController::class, "reorderCard"])->name("reorderCard");
 
+Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}/card/{card_id}/view", [BoardController::class, "showCard"])->name("viewCard");
+Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/card/{card_id}/assign", [BoardController::class, "showCard"])->name("viewCard");
+Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/card/{card_id}/delete", [BoardController::class, "showCard"])->name("viewCard");
+Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/card/{card_id}/comment", [BoardController::class, "showCard"])->name("viewCard");
+
 Route::middleware(["auth", "auth.session"])->get("user/setting", [UserController::class, "showSetting"])->name("setting");
 Route::middleware(["auth", "auth.session"])->get("user/logout", [UserController::class, "logout"])->name("doLogout");
 Route::middleware(["auth", "auth.session"])->post("user/deactivate", [UserController::class, "deactivate"])->name("doDeactivateUser");
