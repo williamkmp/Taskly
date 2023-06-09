@@ -38,6 +38,8 @@ Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/column", [BoardController::class, "addColumn"])->name("addCol");
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/column/{column_id}/card", [BoardController::class, "addCard"])->name("addCard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/column/reorder", [BoardController::class, "reorderCol"])->name("reorderCol");
+Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/column/update", [BoardController::class, "updateCol"])->name("updateCol");
+Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/column/delete", [BoardController::class, "deleteCol"])->name("deleteCol");
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/card/reorder", [BoardController::class, "reorderCard"])->name("reorderCard");
 
 Route::middleware(["auth", "auth.session"])->get("user/setting", [UserController::class, "showSetting"])->name("setting");

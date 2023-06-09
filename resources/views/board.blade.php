@@ -47,8 +47,8 @@
 
 
 @section('content')
-    <x-card teamid="{{ $board->team_id }}" />
-    <x-column teamid="{{ $board->team_id }}" />
+    <x-card teamid="{{ $board->team_id }}"/>
+    <x-column teamid="{{ $board->team_id }}" :isowner="Auth::user()->id == $owner->id"/>
     <div id="board-background"
         class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
         <section class="flex h-full min-w-full gap-4 p-4">
@@ -141,9 +141,9 @@
                         column.cards,
                     )
                 }
-                setInterval(() => {
-                    this.refresh();
-                }, 1900);
+                // setInterval(() => {
+                //     this.refresh();
+                // }, 1900);
 
                 this.ref.addEventListener("dragover", (e) => {
                     e.preventDefault();
@@ -223,12 +223,19 @@
         }
 
         const board = new Board(@json($board));
+        @if (Auth::user()->id == $owner->id)
+            ModalView.onShow('deleteBoard', (modal) => {
+                modal.querySelectorAll("form[action][method]").forEach(
+                    form => form.addEventListener("submit", () => PageLoader.show())
+                );
+            });
 
-        ModalView.onShow('deleteBoard', (modal) => {
-            modal.querySelectorAll("form[action][method]").forEach(
-                form => form.addEventListener("submit", () => PageLoader.show())
-            );
-        });
+            ModalView.onShow('updateBoard', (modal) => {
+                modal.querySelectorAll("form[action][method]").forEach(
+                    form => form.addEventListener("submit", () => PageLoader.show())
+                );
+            });
+        @endif
 
         ModalView.onShow("addCol", (modal) => {
             board.IS_EDITING = true;

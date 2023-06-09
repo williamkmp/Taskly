@@ -16,8 +16,11 @@
     <script>
         class ModalView {
             static el = document.getElementById("modal-view");
+            static current_modal_key = null;
+            static payload = null;
             static modal_template = {};
             static modal_init_callback = {};
+            static modal_close_callback = {};
             static container = document.getElementById("modal-view");
             static modal_body = document.getElementById("modal-content");
 
@@ -39,8 +42,10 @@
             }
 
             static async show(key, payload) {
+                this.payload = payload;
                 const template = ModalView.modal_template[key];
                 if (!template) return;
+                this.current_modal_key = key;
                 ModalView.clear();
                 const callbackFn = ModalView.modal_init_callback[key];
                 const content = template.content.cloneNode(true);
@@ -49,13 +54,22 @@
                 ModalView.el.style.display = "flex";
             }
 
-            static close() {
+            static async close() {
+                if(this.current_modal_key){
+                    const callbackFn = ModalView.modal_close_callback[this.current_modal_key];
+                    if (callbackFn) await callbackFn(ModalView.modal_body, this.payload);
+                }
                 ModalView.clear();
                 ModalView.el.style.display = "none";
+                this.current_modal_key = null;
             }
 
             static onShow(key, callback) {
                 ModalView.modal_init_callback[key] = callback;
+            }
+
+            static onClose(key, callback) {
+                ModalView.modal_close_callback[key] = callback;
             }
         }
         ModalView.init();

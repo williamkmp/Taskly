@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Logic\BoardLogic;
 use App\Logic\TeamLogic;
 use App\Models\Board;
+use App\Models\Column;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
@@ -123,7 +124,7 @@ class BoardController extends Controller
         $right_id = intval($request->right_id);
         $left_id = intval($request->left_id);
 
-        if(!$this->boardLogic->hasAccess($user_id, $board_id)){
+        if (!$this->boardLogic->hasAccess($user_id, $board_id)) {
             return response()->json(["url" => route("home")], HttpResponse::HTTP_BAD_REQUEST);
         }
 
@@ -136,5 +137,29 @@ class BoardController extends Controller
     {
         Board::where("id", intval($board_id))->delete();
         return redirect()->route("viewTeam", ["team_id" => intval($team_id)])->with("notif", ["Deleted\n Board deleted successfulyy"]);
+    }
+    public function updateCol(Request $request, $team_id, $board_id)
+    {
+        $request->validate([
+            "column_name" => "required|max:20",
+            "column_id" => "required",
+        ]);
+
+        $col_id = intval($request->column_id);
+        $column = Column::find($col_id);
+        if (!$column) {
+            return redirect()->back()->with("notif", ["The column not found or its is deleted please contact the owner"]);
+        }
+        $column->name = $request->column_name;
+        $column->save();
+        return redirect()->back()->with("notif", ["Success\nUpdate success"]);
+    }
+
+    public function deleteCol(Request $request, $team_id, $board_id)
+    {
+        $request->validate(["column_id" => "required"]);
+        $col_id = intval($request->column_id);
+        $this->boardLogic->deleteCol($col_id);
+        return redirect()->back()->with("notif", ["Success\nDelete success"]);
     }
 }

@@ -1,32 +1,71 @@
-@props(['teamid'])
-<template id="column">
-    <div data-role="column"
-        class="flex flex-col flex-shrink-0 max-h-full border-2 shadow-lg group h-min border-slate-50 w-72 rounded-xl bg-slate-100">
-        <header class="px-4 py-2 select-none rounded-t-xl" draggable="true">
-            <h2 class="w-full overflow-hidden text-sm font-bold truncate"></h2>
-        </header>
-        <section class="w-full overflow-hidden overflow-y-auto">
-            <div class="flex flex-col gap-3 p-2" id="card-container">
+@props(['teamid', 'isowner'])
+<div style="display: none">
 
+    @if (isset($isowner) && $isowner == true)
+        <template is-modal="updateColumn">
+            <div class="flex flex-col w-full gap-4 p-4">
+                <form class="flex flex-col gap-4" method="POST">
+                    @csrf
+                    <input type="hidden" name="column_id" id="column_id">
+                    <x-form.text name="column_name" label="Column's Name" required />
+                    <x-form.button class="mt-4" type="submit" primary>Add</x-form.button>
+                </form>
             </div>
-        </section>
-        <form class="flex flex-col w-full gap-1 px-2 mt-2 overflow-hidden text-sm max-h-0">
-            <textarea
-                class="w-full px-4 py-2 mb-1 bg-white border border-gray-200 shadow cursor-pointer resize-none select-none line-clamp-3 rounded-xl"
-                id="card" cols="30" rows="3" maxlength="95"></textarea>
-            <button id="btn-submit"
-                class="flex items-center w-full gap-2 py-1 pl-4 mb-2 transition select-none rounded-2xl hover:bg-slate-200">
+        </template>
+
+        <template is-modal="deleteColumn">
+            <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST">
+                @csrf
+                <input type="hidden" name="column_id" id="column_id">
+                <p class="mb-6 text-lg text-center"> Are you sure you want to delete this column?</p>
+                <div class="flex gap-6">
+                    <x-form.button type="submit">Yes</x-form.button>
+                    <x-form.button type="button" action="ModalView.close()" primary>No</x-form.button>
+                </div>
+            </form>
+        </template>
+    @endif
+
+    <template id="column">
+        <div data-role="column"
+            class="flex flex-col flex-shrink-0 max-h-full border-2 shadow-lg group h-min border-slate-50 w-72 rounded-xl bg-slate-100">
+            <header class="flex items-center gap-2 px-4 py-2 select-none rounded-t-xl" draggable="true">
+                <h2 class="w-full overflow-hidden text-sm font-bold truncate"></h2>
+                @if (isset($isowner) && $isowner == true)
+                    <div type="button" id="col-upd-btn"
+                        class="p-2 text-gray-600 transition rounded-full opacity-0 bg-slate-200 hover:bg-slate-300 group-hover:opacity-100 ">
+                        <x-fas-pen class="w-[12px] h-[12px]" />
+                    </div>
+                    <div type="button" id="col-del-btn"
+                        class="p-2 text-gray-600 transition rounded-full opacity-0 bg-slate-200 hover:bg-slate-300 group-hover:opacity-100 ">
+                        <x-fas-trash class="w-[12px] h-[12px]" />
+                    </div>
+                @endif
+            </header>
+            <hr>
+            <section class="w-full overflow-hidden overflow-y-auto">
+                <div class="flex flex-col gap-3 p-2" id="card-container">
+
+                </div>
+            </section>
+            <form class="flex flex-col w-full gap-1 px-2 mt-2 overflow-hidden text-sm max-h-0">
+                <textarea
+                    class="w-full px-4 py-2 mb-1 bg-white border border-gray-200 shadow cursor-pointer resize-none select-none line-clamp-3 rounded-xl"
+                    id="card" cols="30" rows="3" maxlength="95"></textarea>
+                <button id="btn-submit"
+                    class="flex items-center w-full gap-2 py-1 pl-4 mb-2 transition select-none rounded-2xl hover:bg-slate-200">
+                    <x-fas-plus class="w-4 h-4" />
+                    Add Card...
+                </button>
+            </form>
+            <button id="btn-add"
+                class="flex items-center gap-2 py-1 pl-4 mx-2 mb-2 text-sm transition select-none rounded-2xl hover:bg-slate-200">
                 <x-fas-plus class="w-4 h-4" />
                 Add Card...
             </button>
-        </form>
-        <button id="btn-add"
-            class="flex items-center gap-2 py-1 pl-4 mx-2 mb-2 text-sm transition select-none rounded-2xl hover:bg-slate-200">
-            <x-fas-plus class="w-4 h-4" />
-            Add Card...
-        </button>
-    </div>
-</template>
+        </div>
+    </template>
+</div>
 
 
 @pushOnce('component')
@@ -52,6 +91,46 @@
                 const colHeader = this.ref.querySelector(":scope > header");
                 colHeader.setAttribute('draggable', (id != null));
 
+                @if (isset($isowner) && $isowner == true)
+                    this.ref.querySelector(":scope > header > #col-upd-btn").addEventListener("click", () => ModalView
+                        .show("updateColumn", {
+                            name: this.ref.dataset.name,
+                            id: this.ref.dataset.id
+                        }));
+                    this.ref.querySelector(":scope > header > #col-del-btn").addEventListener("click", () => ModalView
+                        .show("deleteColumn", {
+                            name: this.ref.dataset.name,
+                            id: this.ref.dataset.id
+                        }));
+
+                    ModalView.onShow("updateColumn", (modal, payload) => {
+                        this.board.IS_EDITING = true;
+                        const board_id = this.board.ref.dataset.id;
+                        const form = modal.querySelector("form");
+                        const inputTag = modal.querySelector("input#input-text-column_name");
+                        const idTag = modal.querySelector("input#column_id");
+                        inputTag.value = payload.name;
+                        idTag.value = payload.id;
+                        form.action = `{{ url('team/' . $teamid . '/board/${board_id}/column/update') }}`;
+                        form.addEventListener("submit", () => PageLoader.show());
+                    });
+                    ModalView.onShow("deleteColumn", (modal, payload) => {
+                        this.board.IS_EDITING = true;
+                        const board_id = this.board.ref.dataset.id;
+                        const form = modal.querySelector("form");
+                        const idTag = modal.querySelector("input#column_id");
+                        idTag.value = payload.id;
+                        form.action = `{{ url('team/' . $teamid . '/board/${board_id}/column/delete') }}`;
+                        form.addEventListener("submit", () => PageLoader.show());
+                    });
+
+                    ModalView.onClose("updateColumn", () => {
+                        this.board.IS_EDITING = false;
+                    });
+                    ModalView.onClose("deleteColumn", () => {
+                        this.board.IS_EDITING = false;
+                    });
+                @endif
 
                 colHeader.addEventListener('dragstart', () => {
                     this.board.IS_EDITING = true;
@@ -63,14 +142,6 @@
                     this.ref.classList.remove("is-dragging");
                     colHeader.setAttribute('draggable', false);
                     this.ref.classList.remove("opacity-50");
-
-                    console.log("BOARD_UPD");
-                    console.log({
-                        middle_id: this.ref.dataset.id,
-                        bottom_id: this.ref.nextElementSibling?.dataset?.id || null,
-                        top_id: this.ref.previousElementSibling?.dataset?.id || null,
-                    });
-
                     const board_id = this.board.ref.dataset.id;
 
                     ServerRequest.post(`{{ url('team/' . $teamid . '/board/${board_id}/column/reorder') }}`, {

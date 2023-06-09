@@ -215,4 +215,24 @@ class BoardLogic
         if($previous_top_column) $previous_top_column->save();
         return $target_column;
     }
+
+    function deleteCol(int $target_column_id) {
+        $target_column = Column::find($target_column_id);
+        $top_column = null;
+        $bottom_column = null;
+        if(!$target_column) return;
+        if($target_column->previous_id) $top_column = Column::find($target_column->previous_id);
+        if($target_column->next_id) $bottom_column = Column::find($target_column->next_id);
+
+        if($top_column){
+            $top_column->next_id = $bottom_column ? $bottom_column->id : null;
+            $top_column->save();
+        }
+        if($bottom_column){
+            $bottom_column->previous_id = $top_column ? $top_column->id : null;
+            $bottom_column->save();
+        }
+        $target_column->delete();
+        return;
+    }
 }
