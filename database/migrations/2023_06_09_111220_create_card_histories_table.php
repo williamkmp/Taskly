@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('card_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("card_id")->constrained();
+            $table->foreignId("card_id")->constrained()->onDelete("cascade");
             $table->foreignId("user_id")->constrained();
             $table->enum("type",["comment", "event"])->default("comment");
             $table->string("content")->nullable();
