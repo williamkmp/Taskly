@@ -326,7 +326,7 @@
                         <div class="flex items-center gap-4">
                             <x-avatar name="{{ $member->name }}" asset="{{ $member->image_path }}"
                                 class="!flex-shrink-0 !flex-grow-0 w-12" />
-                            <p class="truncate">{{ $member->name }}</p>
+                            <p class="w-40 truncate">{{ $member->name }}</p>
                         </div>
                     @endforeach
                 </div>

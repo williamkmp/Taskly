@@ -27,6 +27,12 @@
                     this.ref.classList.toggle("!bg-gray-500");
                 });
 
+                this.ref.addEventListener("click", () => {
+                    const board_id = this.board.ref.dataset.id;
+                    const card_id = this.ref.dataset.id;
+                    window.location.href = `{{ url('team/'.$teamid.'/board/${board_id}/card/${card_id}/view') }}`;
+                });
+
                 this.ref.addEventListener("dragend", () => {
                     this.ref.classList.remove("is-dragging");
                     this.ref.setAttribute('draggable', false);
