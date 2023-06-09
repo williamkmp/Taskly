@@ -41,7 +41,6 @@
                 </div>
             </section>
         @endif
-
     </div>
 @endsection
 
@@ -141,9 +140,9 @@
                         column.cards,
                     )
                 }
-                // setInterval(() => {
-                //     this.refresh();
-                // }, 1900);
+                setInterval(() => {
+                    this.refresh();
+                }, 2000);
 
                 this.ref.addEventListener("dragover", (e) => {
                     e.preventDefault();
