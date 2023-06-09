@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'userInTeam' => \App\Http\Middleware\TeamMemeberMiddlerware::class,
         'boardAccess' => \App\Http\Middleware\BoardAccsessMiddleWare::class,
+        'cardExist' => \App\Http\Middleware\CardExistMiddleware::class,
     ];
 }
