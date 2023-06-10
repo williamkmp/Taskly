@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Logic\BoardLogic;
+use App\Logic\CardLogic;
 use App\Logic\TeamLogic;
 use App\Models\Board;
+use App\Models\Card;
 use App\Models\Column;
 use App\Models\Team;
 use Illuminate\Http\Request;
@@ -15,7 +17,8 @@ class BoardController extends Controller
 {
     public function __construct(
         protected TeamLogic $teamLogic,
-        protected BoardLogic $boardLogic
+        protected BoardLogic $boardLogic,
+        protected CardLogic $cardLogic
     ) {
     }
 
@@ -94,6 +97,7 @@ class BoardController extends Controller
         $card_name = $request->name;
 
         $newCard = $this->boardLogic->addCard($column_id, $card_name);
+        $this->cardLogic->cardAddEvent($newCard->id, Auth::user()->id, "Created card");
         return response()->json($newCard);
     }
 

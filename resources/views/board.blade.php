@@ -191,6 +191,8 @@
                 ServerRequest.get(`{{ route('boardJson', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}`)
                     .then(response => {
                         if (this.IS_EDITING) return;
+                        console.log(response);
+                        this.IS_EDITING = true;
                         this.columnList = [];
                         const json = response.data;
 
@@ -213,9 +215,12 @@
                                 column.cards,
                             )
                         }
+                        this.IS_EDITING = false;
                         console.log("[BOARD]: refreshed...");
                     }).catch((error) => {
                         console.log("ERROR");
+                        PageLoader.show();
+                        this.ref.innerHTML = "";
                         console.log(error);
                     });
             }
