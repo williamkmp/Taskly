@@ -47,7 +47,7 @@
                 <hr>
 
                 <article class="flex flex-col gap-2">
-                    <p>youe are invited to join team <span id="team-name" class="font-bold"></span></p>
+                    <p>you are invited to join team <span id="team-name" class="font-bold"></span></p>
                     <p><span class="font-bold">Description: </span><span id="team-description"></span></p>
                 </article>
 

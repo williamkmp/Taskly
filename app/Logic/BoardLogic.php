@@ -24,7 +24,6 @@ class BoardLogic
         'mild',
         'sunset',
         'cosmic',
-        'jupiter',
         'police',
         'morning'
     ];
