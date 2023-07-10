@@ -142,7 +142,7 @@
                 }
                 setInterval(() => {
                     this.refresh();
-                }, 2000);
+                }, 2500);
 
                 this.ref.addEventListener("dragover", (e) => {
                     e.preventDefault();
@@ -191,7 +191,6 @@
                 ServerRequest.get(`{{ route('boardJson', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}`)
                     .then(response => {
                         if (this.IS_EDITING) return;
-                        console.log(response);
                         this.IS_EDITING = true;
                         this.columnList = [];
                         const json = response.data;
